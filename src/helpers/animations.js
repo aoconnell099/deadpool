@@ -56,7 +56,7 @@ export default function makeAnimations(scene) {
         repeat: -1
     });
     scene.anims.create({
-        key: 'dp_swords_run_right',
+        key: 'dp_swords_run_left',
         frames: [ {key:'deadpool', frame: 'swords_step_left_1/3'}, {key:'deadpool', frame: 'swords_step_left_2'}, {key:'deadpool', frame: 'swords_step_left_1/3'}, {key:'deadpool', frame: 'swords_step_left_4'} ],
         frameRate: 10,
         repeat: -1

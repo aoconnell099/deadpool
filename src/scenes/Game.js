@@ -1,5 +1,6 @@
 import phaser, { Scene } from 'phaser';
 import Deadpool from '../sprites/Deadpool';
+import Enemy from '../sprites/Enemy';
 
 export class Game extends Scene {
     constructor () {
@@ -22,7 +23,7 @@ export class Game extends Scene {
         //  Background tileSprite of the city skyline and the foreground tileSprite of the highway
         this.background = this.add.tileSprite(1600, 300, 3200, 1024, 'city').setDisplaySize(3200, 600);
         this.foreground = this.add.tileSprite(1600, 300, 3200, 1024, 'road').setDisplaySize(3200, 600);
-        this.physics.world.bounds.width = 3200;
+        this.physics.world.bounds.width = 3000;
         this.physics.world.bounds.height = 400;
         console.log(this.registry.get('health_current'));
         // // Using the Scene Data Plugin we can store data on a Scene level
@@ -41,12 +42,33 @@ export class Game extends Scene {
         // Add deadpool to the game
         this.deadpool = new Deadpool({
             scene: this,
-            x: 100,
+            x: 500,
             y: 450,
         });
         this.deadpool.setDisplaySize(84, 102);
+
+        this.enemy = new Enemy({
+            scene: this,
+            x: 800,
+            y: 450,
+        });
+        this.enemy.setDisplaySize(100, 120);
+
+        //check the registry to see if the enemy has already been killed. If not create the enemy in the level and register it with the game
+        // regName = `${level}_Enemies_${enemyNum}`;
+        // if (this.registry.get(regName) !== 'dead') {
+        //   let enemy = new Enemy({
+        //   scene: this,
+        //   x: object.x + 8, 
+        //   y: object.y - 8,
+        //   number: enemyNum
+        //   });
+        //   this.enemies.add(enemy);
+        //   this.registry.set(regName, 'active');
+        // }
+        // enemyNum += 1;
         
-        this.spawnpoints = [];  //create an array to hold the spawnpoints populated by converObjects()
+        // this.spawnpoints = [];  //create an array to hold the spawnpoints populated by converObjects()
         //set up groups, tell group to run updates on its children, then call the object conversion method
         // this.enemies = this.add.group();
         // this.enemies.runChildUpdate = true;
@@ -55,10 +77,10 @@ export class Game extends Scene {
         // this.pickups = this.add.group();
         //this.convertObjects();
         // Leave for now -- will eventually be enemy class
-        this.enemy = this.physics.add.sprite(745, 450, 'blonde').enableBody(false, true, true);
-        this.enemy.setDisplaySize(125, 150);
-        this.enemy.setFriction(1, 1);
-        this.enemy.setCollideWorldBounds(true);
+        // this.enemy = this.physics.add.sprite(745, 450, 'blonde').enableBody(false, true, true);
+        // this.enemy.setDisplaySize(125, 150);
+        // this.enemy.setFriction(1, 1);
+        // this.enemy.setCollideWorldBounds(true);
 
         // // Add the static square bg first at 0,0 position
         // this.staticBg = this.add.image(0, 0, 'bg-static')
@@ -74,7 +96,7 @@ export class Game extends Scene {
         // Set its viewport as same as our game dimension
         //cam.setViewport(0,0,800,600);
         // Center align the camera to occupy all our game objects\
-        this.cameras.main.zoom = 0.5;
+        this.cameras.main.zoom = 1.0;
 
     }
     update (time, delta) {

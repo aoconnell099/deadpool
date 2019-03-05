@@ -19,7 +19,7 @@ export class Preloader extends Scene {
             this.progress.clear();
             this.progress.fillStyle(0xfff6d3, 1);
             this.progress.fillRect((this.cameras.main.width / 4), (this.cameras.main.height /2) - 16, (this.cameras.main.width / 2) * value, 16);
-        }, this);
+        }, this); 
 
         //cleanup our graphics on complete
         this.load.on('complete', function () {
