@@ -77,8 +77,8 @@ export class Game extends Scene {
         // this.pickups = this.add.group();
         //this.convertObjects();
         // Leave for now -- will eventually be enemy class
-        // this.enemy = this.physics.add.sprite(745, 450, 'blonde').enableBody(false, true, true);
-        // this.enemy.setDisplaySize(125, 150);
+         this.enemy2 = this.physics.add.sprite(745, 450, 'slime_left').enableBody(false, true, true);
+         this.enemy2.setDisplaySize(120, 160);
         // this.enemy.setFriction(1, 1);
         // this.enemy.setCollideWorldBounds(true);
 
@@ -103,7 +103,7 @@ export class Game extends Scene {
         this.deadpool.update(time, delta);
         this.enemy.update(time, delta);
         this.cameras.main.setScroll(this.deadpool.x-340, 0);
-        this.enemy.anims.play('blonde_1_stand_left');
+        this.enemy2.anims.play('slime_punch_left');
 
     }
 }

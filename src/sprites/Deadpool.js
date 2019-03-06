@@ -24,7 +24,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             //jump2: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
             switchGun: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT),
             fire: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
-            melee: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z),
+            melee: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
             up: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
             left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
             right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
@@ -43,12 +43,15 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             down: this.keys.down.isDown,
             up: this.keys.up.isDown,
             jump: this.keys.jump.isDown,
-            switchGun: this.keys.switchGun.isDown,
+            switchGun: this.keys.switchGun,
             fire: this.keys.fire.isDown,
             melee: this.keys.melee.isDown
         };
 
-        if (input.switchGun) {
+        // if (input.switchGun) {
+        //     if(!input.switchGun) {
+            input.switchGun.on('down', function(event) { /* ... */ 
+             console.log(event);
             if (this.weaponIndex === 0 && this.weapons.length === 1) {
                 this.weaponIndex = 0;
                 this.weapon = this.weapons[this.weaponIndex];
@@ -57,11 +60,12 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 this.weaponIndex = 0;
                 this.weapon = this.weapons[this.weaponIndex];
             }
-            else if (this.weaponIndex < this.weapons.length - 1) {
-                this.weaponIndex++;
+            else if (this.weaponIndex < (this.weapons.length - 1)) {
+                this.weaponIndex++; 
                 this.weapon =this.weapons[this.weaponIndex];
             }
-        }
+            });
+       // }
 
         if (input.left)
         {

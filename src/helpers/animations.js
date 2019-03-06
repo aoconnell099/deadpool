@@ -72,7 +72,7 @@ export default function makeAnimations(scene) {
     scene.anims.create({
         key: 'dp_swords_attack_right',
         frames: [ {key:'deadpool', frame: 'swords_stand_right'}, {key:'deadpool', frame: 'swords_swing_right'} ],
-        frameRate: 10,
+        frameRate: 5,
        // repeat: -1
     });
     scene.anims.create({
@@ -89,6 +89,13 @@ export default function makeAnimations(scene) {
         key: 'blonde_1_stand_left',
         frames: [ { key: 'blonde', frame: 0 } ],
         frameRate: 20,
+        repeat: -1
+    });
+    // Slime monster
+    scene.anims.create({
+        key: 'slime_punch_left',
+        frames: [ {key:'slime_left', frame: 'punch1'}, {key:'slime_left', frame: 'punch2'}, {key:'slime_left', frame: 'punch3'}, {key:'slime_left', frame: 'punch4'}, {key:'slime_left', frame: 'punch5'}, {key:'slime_left', frame: 'punch6'}, {key:'slime_left', frame: 'punch7'}, {key:'slime_left', frame: 'punch8'} ],
+        frameRate: 10,
         repeat: -1
     });
 }

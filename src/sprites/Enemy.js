@@ -9,45 +9,48 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         super(config.scene, config.x, config.y, 'blonde');
         config.scene.physics.world.enable(this);
         this.scene = config.scene;
-        //this.color = config.color;
-        //this.setTexture('elves');
         this.setPosition(config.x, config.y);
-        //this.play(this.color + 'Idle');
         this.scene.add.existing(this);
-        this.anims.play('blonde_1_stand_left');
-        //this.on('animationcomplete', this.animComplete, this);
-        this.alive = true;
-        //var hx = (this.color === 'blue') ? 110 : -40;
-        //var hx = 110;
+        this.anims.play('blonde_1_stand_left'); // can probably remove soon once more enemies are added
         this.hp = new HealthBar(this.scene, config.x - 30, config.y - 80);
-        //this.timer = scene.time.addEvent({ delay: Phaser.Math.Between(1000, 3000), callback: this.fire, callbackScope: this });
-        
+
         // Enemy config from phaser tilemap pack
-        this.number = config.number;
-        this.body.setDrag(8, 8);
-        this.body.setBounce(.5, .5);
-        this.health = 100;
-        this.alive = true;
-        this.attack = 15;
-        this.damaged = false;
-        this.canExclaim = true;
-        // this.exclaimSound = this.scene.sound.add('enemyExclaim');
-        // this.exclaimSound.setVolume(.2);
-        // this.exclamation = this.scene.add.image(this.x, this.y - 10, 'atlas', 'exclamation');
-        //this.exclamation.alpha = 0;
+        this.number = config.number; // used to track which number enemy they are
+        this.body.setDrag(8, 8); // Dont need for now
+        this.body.setBounce(.5, .5); // Dont need for now
+        this.health = 100; // Base health for all enemies is 100. Health for specialized is multiplied by whatever seems fit (e.g. this.health * 1.5)
+        this.alive = true; // Tracks if living for movement and screen removal puropses
+        this.attack = 15; // Attack power -- subject to change
+        this.damaged = false; // For playing the damaged animation and stopping enemy attack for a moment
+        this.canExclaim = true; // Dont need unless get an exclaim sprite for 
         this.playerDetected = false;
-        this.detectionDistance = 400;
-        this.stoppingDistance = 85;
-        this.canDecide = true;
+        this.detectionDistance = 300;
+        this.stoppingDistance = 100;
+        this.canDecide = true; // used for if he can decide to atttack when he is not injured
         this.moveX = 'none';
         this.moveY = 'none';
         this.walk = 100;
         this.run = 200;
+
+        // Mostly unnecessary but dont want to get rid of yet
+
+        // this.exclaimSound = this.scene.sound.add('enemyExclaim');
+        // this.exclaimSound.setVolume(.2);
+        // this.exclamation = this.scene.add.image(this.x, this.y - 10, 'atlas', 'exclamation');
+        // this.exclamation.alpha = 0;
         // this.deathSound = this.scene.sound.add('enemyDeathSFX');
         // this.deathSound.setVolume(.4);
         // this.dropSound = this.scene.sound.add('itemDropSFX');
         // this.dropSound.setVolume(.2);
         // this.scene.add.existing(this);
+
+        //this.on('animationcomplete', this.animComplete, this);
+        //this.play(this.color + 'Idle');
+        //var hx = (this.color === 'blue') ? 110 : -40;
+        //var hx = 110;
+        //this.timer = scene.time.addEvent({ delay: Phaser.Math.Between(1000, 3000), callback: this.fire, callbackScope: this });
+        //this.color = config.color;
+        //this.setTexture('elves');
     }
 
     update (time, delta)
@@ -59,7 +62,6 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         if (this.alive) {
             //this.exclamation.setPosition(this.x, this.y - 12);
             this.playerDetected = this.detectPlayer();
-            //console.log(this.playerDected);
             if (!this.damaged) {
               if (this.playerDetected) {
                 // if (this.canExclaim) {
@@ -78,9 +80,9 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
                 if (this.canDecide) {
                   this.canDecide = false;
                   this.scene.time.addEvent({ delay: 500, callback: this.resetDecide, callbackScope: this });
-                  //let decisionX = Phaser.Math.RND.integerInRange(1,4);
+                  //let decisionX = Phaser.Math.Between(1,4); //broken in current version of phaser
                   let decisionX = Math.floor(Math.random() * 4) + 1;
-                  console.log(decisionX);
+                  //console.log(decisionX);
                   if (decisionX === 1 || decisionX === 2) {
                     this.moveX = 'none';
                   } else if (decisionX === 3) {
@@ -88,9 +90,9 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
                   } else if (decisionX === 4) {
                     this.moveX = 'right';
                   }
-                  //let decisionY = Phaser.Math.RND.integerInRange(1,4);
+                  //let decisionY = Phaser.Math.Between(1,4);  //broken in current version of phaser
+                  //console.log(decisionY);
                   let decisionY = Math.floor(Math.random() * 4) + 1;
-                  console.log(decisionY);
                   if (decisionY === 1 || decisionY === 2) {
                     this.moveY = 'none';
                   } else if (decisionY === 3) {
@@ -131,15 +133,8 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     detectPlayer() 
   {
     this.distanceToPlayerX = Math.abs(this.x - this.scene.deadpool.x);
-    this.distanceToPlayerY = Math.abs(this.y - this.scene.deadpool.y);
-    // console.log(this.distanceToPlayerX);
-    // console.log(this.distanceToPlayerY);
-    // console.log((this.distanceToPlayerY <= this.detectionDistance));
-    // console.log((this.distanceToPlayerX <= this.detectionDistance));
-    // console.log(this.alive);
-    // console.log(!this.damaged);
-    
-    return ((this.distanceToPlayerY <= this.detectionDistance) &&  (this.distanceToPlayerX <= this.detectionDistance) && this.alive && !this.damaged);//this.scene.deadpool.alive && !this.scene.deadpool.damaged;
+    this.distanceToPlayerY = Math.abs(this.y - this.scene.deadpool.y);  
+    return (this.distanceToPlayerY <= this.detectionDistance) && (this.distanceToPlayerX <= this.detectionDistance) && this.alive && !this.damaged;
   }
 
   detectBehavior()
