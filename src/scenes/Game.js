@@ -101,6 +101,7 @@ export class Game extends Scene {
     }
     update (time, delta) {
         this.deadpool.update(time, delta);
+        this.enemy.update(time, delta);
         this.cameras.main.setScroll(this.deadpool.x-340, 0);
         this.enemy.anims.play('blonde_1_stand_left');
 

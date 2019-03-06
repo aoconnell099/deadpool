@@ -9,6 +9,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         
         // Custom elements
         this.health = 100;
+        this.alive = true;
         this.direction = 'right';
         this.animPrefix = 'dp_';
         this.animSuffix = '';
@@ -16,7 +17,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         this.weaponIndex = 0;
         this.weapons = [];
         this.weapons.push(this.weapon);
-        this.weapons.push('swords_')
+        this.weapons.push('swords_');
 
         this.keys = {
             jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACEBAR),

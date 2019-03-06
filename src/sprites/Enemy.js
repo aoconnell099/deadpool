@@ -1,5 +1,6 @@
 import { Sprite } from 'phaser';
 import HealthBar from './HealthBar'
+// import { Math } from 'phaser';
 
 export default class Enemy extends Phaser.GameObjects.Sprite {
 
@@ -25,9 +26,9 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         this.number = config.number;
         this.body.setDrag(8, 8);
         this.body.setBounce(.5, .5);
-        this.health = 4;
+        this.health = 100;
         this.alive = true;
-        this.attack = 1;
+        this.attack = 15;
         this.damaged = false;
         this.canExclaim = true;
         // this.exclaimSound = this.scene.sound.add('enemyExclaim');
@@ -35,12 +36,13 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         // this.exclamation = this.scene.add.image(this.x, this.y - 10, 'atlas', 'exclamation');
         //this.exclamation.alpha = 0;
         this.playerDetected = false;
-        this.detectionDistance = 64;
+        this.detectionDistance = 400;
+        this.stoppingDistance = 85;
         this.canDecide = true;
         this.moveX = 'none';
         this.moveY = 'none';
-        this.walk = 16;
-        this.run = 32;
+        this.walk = 100;
+        this.run = 200;
         // this.deathSound = this.scene.sound.add('enemyDeathSFX');
         // this.deathSound.setVolume(.4);
         // this.dropSound = this.scene.sound.add('itemDropSFX');
@@ -48,55 +50,60 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         // this.scene.add.existing(this);
     }
 
-    preUpdate (time, delta)
+    update (time, delta)
     {
-        super.preUpdate(time, delta);
+        //super.preUpdate(time, delta);
         //this.body.setVelocity(90, 0);
         this.hp.setXY(this.x-30, this.y-80);
  
-        // if (this.alive) {
-        //     //this.exclamation.setPosition(this.x, this.y - 12);
-        //     this.playerDetected = this.detectPlayer();
-        //     if (!this.damaged) {
-        //       if (this.playerDetected) {
-        //         if (this.canExclaim) {
-        //           this.canExclaim = false;
-        //           //this.exclaimSound.play();
-        //           //this.exclamation.alpha = 1;
-        //           //this.scene.time.addEvent({ delay: 500, callback: this.hideExclaim, callbackScope: this });
-        //         }
-        //         //call the player detected behavior
-        //         this.detectBehavior();
-        //       } else {
-        //         if (!this.canExclaim){
-        //           this.canExclaim = true;
-        //         }
-        //         //decide where to move
-        //         if (this.canDecide) {
-        //           this.canDecide = false;
-        //           this.scene.time.addEvent({ delay: 500, callback: this.resetDecide, callbackScope: this });
-        //           let decisionX = Phaser.Math.RND.integerInRange(1, 4);
-        //           if (decisionX === 1 || decisionX === 2) {
-        //             this.moveX = 'none';
-        //           } else if (decisionX === 3) {
-        //             this.moveX = 'left';
-        //           } else if (decisionX === 4) {
-        //             this.moveX = 'right';
-        //           }
-        //           let decisionY = Phaser.Math.RND.integerInRange(1, 4);
-        //           if (decisionY === 1 || decisionY === 2) {
-        //             this.moveY = 'none';
-        //           } else if (decisionY === 3) {
-        //             this.moveY = 'up';
-        //           } else if (decisionY === 4) {
-        //             this.moveY = 'down';
-        //           }
-        //         }
-        //       }
+        if (this.alive) {
+            //this.exclamation.setPosition(this.x, this.y - 12);
+            this.playerDetected = this.detectPlayer();
+            //console.log(this.playerDected);
+            if (!this.damaged) {
+              if (this.playerDetected) {
+                // if (this.canExclaim) {
+                //   this.canExclaim = false;
+                //   //this.exclaimSound.play();
+                //   //this.exclamation.alpha = 1;
+                //   //this.scene.time.addEvent({ delay: 500, callback: this.hideExclaim, callbackScope: this });
+                // }
+                //call the player detected behavior
+                this.detectBehavior();
+              } else {
+                // if (!this.canExclaim){
+                //   this.canExclaim = true;
+                // }
+                //decide where to move
+                if (this.canDecide) {
+                  this.canDecide = false;
+                  this.scene.time.addEvent({ delay: 500, callback: this.resetDecide, callbackScope: this });
+                  //let decisionX = Phaser.Math.RND.integerInRange(1,4);
+                  let decisionX = Math.floor(Math.random() * 4) + 1;
+                  console.log(decisionX);
+                  if (decisionX === 1 || decisionX === 2) {
+                    this.moveX = 'none';
+                  } else if (decisionX === 3) {
+                    this.moveX = 'left';
+                  } else if (decisionX === 4) {
+                    this.moveX = 'right';
+                  }
+                  //let decisionY = Phaser.Math.RND.integerInRange(1,4);
+                  let decisionY = Math.floor(Math.random() * 4) + 1;
+                  console.log(decisionY);
+                  if (decisionY === 1 || decisionY === 2) {
+                    this.moveY = 'none';
+                  } else if (decisionY === 3) {
+                    this.moveY = 'up';
+                  } else if (decisionY === 4) {
+                    this.moveY = 'down';
+                  }
+                }
+              }
       
-        //       //move based on above behavior
-        //       this.movement();
-        //     }
+              //move based on above behavior
+              this.movement();
+            }
       
         //     // //kill this dude!
         //     // if (this.health <= 0) {
@@ -118,14 +125,21 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         //     // } else {
         //     //   this.setAlpha(1);
         //     // }
-        //   }
+          }
     }
 
     detectPlayer() 
   {
     this.distanceToPlayerX = Math.abs(this.x - this.scene.deadpool.x);
     this.distanceToPlayerY = Math.abs(this.y - this.scene.deadpool.y);
-    return (this.distanceToPlayerY <= this.detectionDistance) &&  (this.distanceToPlayerX <= this.detectionDistance) && this.scene.deadpool.alive && !this.scene.deadpool.damaged;
+    // console.log(this.distanceToPlayerX);
+    // console.log(this.distanceToPlayerY);
+    // console.log((this.distanceToPlayerY <= this.detectionDistance));
+    // console.log((this.distanceToPlayerX <= this.detectionDistance));
+    // console.log(this.alive);
+    // console.log(!this.damaged);
+    
+    return ((this.distanceToPlayerY <= this.detectionDistance) &&  (this.distanceToPlayerX <= this.detectionDistance) && this.alive && !this.damaged);//this.scene.deadpool.alive && !this.scene.deadpool.damaged;
   }
 
   detectBehavior()
@@ -148,13 +162,15 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
 
   movement()
   {
+    this.distanceToPlayerX = Math.abs(this.x - this.scene.deadpool.x);
+    this.distanceToPlayerY = Math.abs(this.y - this.scene.deadpool.y);
     let speed;
     if (this.playerDetected) {
       speed = this.run;
     } else {
       speed = this.walk;
     }
-    if (this.moveX === 'none') {
+    if (this.moveX === 'none' || this.distanceToPlayerX <= this.stoppingDistance) {
       this.body.setVelocityX(0);
     } else if (this.moveX === 'left') {
       this.body.setVelocityX(-speed);
@@ -162,7 +178,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
       this.body.setVelocityX(speed);
     }
 
-    if (this.moveY === 'none') {
+    if (this.moveY === 'none' || this.distanceToPlayerY <= this.stoppingDistance) {
       this.body.setVelocityY(0);
     } else if (this.moveY === 'up') {
       this.body.setVelocityY(-speed);
@@ -176,10 +192,10 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     this.canDecide = true;
   }
 
-  damage(ammount) 
+  damage(amount) 
   {
     if (!this.damaged) {
-      this.health -= ammount;
+      this.health -= amount;
       this.damaged = true;
       this.setTint(0x8e2f15);
       this.scene.time.addEvent({ delay: 1000, callback: this.normalize, callbackScope: this });
@@ -260,17 +276,17 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         // }
     }
 
-    damage (amount)
-    {
-        if (this.hp.decrease(amount))
-        {
-            this.alive = false;
+    // damage (amount)
+    // {
+    //     if (this.hp.decrease(amount))
+    //     {
+    //         this.alive = false;
 
-            // this.play(this.color + 'Dead');
+    //         // this.play(this.color + 'Dead');
 
-            // (this.color === 'blue') ? bluesAlive-- : greensAlive--;
-        }
-    }
+    //         // (this.color === 'blue') ? bluesAlive-- : greensAlive--;
+    //     }
+    // }
 
     fire ()
     {
