@@ -5,7 +5,9 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         console.log('before super');
         super(config.scene, config.x, config.y, 'deadpool', 'stand_right');
         config.scene.physics.world.enable(this);
+        this.body.setCollideWorldBounds(true);
         this.scene = config.scene;
+        this.setDisplaySize(84, 102);
         
         // Custom elements
         this.health = 100;
@@ -48,10 +50,9 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             melee: this.keys.melee.isDown
         };
 
-        // if (input.switchGun) {
-        //     if(!input.switchGun) {
-            input.switchGun.on('down', function(event) { /* ... */ 
-             console.log(event);
+         if (input.switchGun.isDown) {
+            input.switchGun.on('up', (event) => { /* ... */ 
+             //console.log(event);
             if (this.weaponIndex === 0 && this.weapons.length === 1) {
                 this.weaponIndex = 0;
                 this.weapon = this.weapons[this.weaponIndex];
@@ -65,7 +66,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 this.weapon =this.weapons[this.weaponIndex];
             }
             });
-       // }
+        }
 
         if (input.left)
         {

@@ -11,13 +11,17 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         this.scene = config.scene;
         this.setPosition(config.x, config.y);
         this.scene.add.existing(this);
-        this.anims.play('blonde_1_stand_left'); // can probably remove soon once more enemies are added
+        //this.anims.play('blonde_1_stand_left'); // can probably remove soon once more enemies are added
         this.hp = new HealthBar(this.scene, config.x - 30, config.y - 80);
 
+        this.direction = 'left';
+        this.type = 'blonde_1_';
+        this.action;
         // Enemy config from phaser tilemap pack
         this.number = config.number; // used to track which number enemy they are
         this.body.setDrag(8, 8); // Dont need for now
         this.body.setBounce(.5, .5); // Dont need for now
+        this.body.setCollideWorldBounds(true);
         this.health = 100; // Base health for all enemies is 100. Health for specialized is multiplied by whatever seems fit (e.g. this.health * 1.5)
         this.alive = true; // Tracks if living for movement and screen removal puropses
         this.attack = 15; // Attack power -- subject to change
@@ -26,6 +30,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         this.playerDetected = false;
         this.detectionDistance = 300;
         this.stoppingDistance = 100;
+        this.canMove = true;
         this.canDecide = true; // used for if he can decide to atttack when he is not injured
         this.moveX = 'none';
         this.moveY = 'none';
@@ -165,21 +170,33 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     } else {
       speed = this.walk;
     }
-    if (this.moveX === 'none' || this.distanceToPlayerX <= this.stoppingDistance) {
+    if (this.moveX === 'none' || this.distanceToPlayerX <= this.stoppingDistance+10) {
       this.body.setVelocityX(0);
     } else if (this.moveX === 'left') {
+      this.direction = 'left';
       this.body.setVelocityX(-speed);
     } else if (this.moveX === 'right') {
+      this.direction = 'right';
       this.body.setVelocityX(speed);
     }
 
-    if (this.moveY === 'none' || this.distanceToPlayerY <= this.stoppingDistance) {
+    if (this.moveY === 'none' || this.distanceToPlayerY <= this.stoppingDistance-25) {
       this.body.setVelocityY(0);
     } else if (this.moveY === 'up') {
       this.body.setVelocityY(-speed);
     } else if (this.moveY === 'down') {
       this.body.setVelocityY(speed);
     }
+    let action = null;
+
+    if (this.body.velocity.x !== 0 || this.body.velocity.y !== 0) {
+        action = 'walk_';
+    } else if (this.body.velocity.x === 0 && this.body.velocity.y === 0) {
+        action = 'stand_';
+    }
+
+    let anim = this.type + action + this.direction;
+    this.anims.play(anim, true);
   }
 
   resetDecide() 

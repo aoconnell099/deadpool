@@ -1,6 +1,7 @@
 import phaser, { Scene } from 'phaser';
 import Deadpool from '../sprites/Deadpool';
 import Enemy from '../sprites/Enemy';
+import Slime from '../sprites/Slime';
 
 export class Game extends Scene {
     constructor () {
@@ -9,7 +10,7 @@ export class Game extends Scene {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: false
+                    debug: true
                 }
             }
         })
@@ -23,8 +24,7 @@ export class Game extends Scene {
         //  Background tileSprite of the city skyline and the foreground tileSprite of the highway
         this.background = this.add.tileSprite(1600, 300, 3200, 1024, 'city').setDisplaySize(3200, 600);
         this.foreground = this.add.tileSprite(1600, 300, 3200, 1024, 'road').setDisplaySize(3200, 600);
-        this.physics.world.bounds.width = 3000;
-        this.physics.world.bounds.height = 400;
+        this.physics.world.setBounds(300, 220, 2900, 380);       
         console.log(this.registry.get('health_current'));
         // // Using the Scene Data Plugin we can store data on a Scene level
         // this.data.set('lives', 3);
@@ -45,14 +45,30 @@ export class Game extends Scene {
             x: 500,
             y: 450,
         });
-        this.deadpool.setDisplaySize(84, 102);
+        //this.deadpool.setDisplaySize(24, 32);//84, 102
 
-        this.enemy = new Enemy({
+        // this.enemy = new Enemy({
+        //     scene: this,
+        //     x: 800,
+        //     y: 450,
+        // });
+        // this.enemy.setDisplaySize(100, 120);
+
+        this.slime = new Slime({
             scene: this,
-            x: 800,
+            x: 1600,
             y: 450,
         });
-        this.enemy.setDisplaySize(100, 120);
+        //this.slime.setSize(84, 102, true);
+        //this.slime.setDisplaySize(84, 102);
+
+        // this.enemy2 = this.physics.add.sprite(745, 450, 'slime_left').enableBody(false, true, true);
+        // this.enemy2.setDisplaySize(84, 102);
+        // this.enemy2.anims.play('slime_stand_left');
+        // this.enemy2.setFriction(1, 1);
+        // this.enemy2.setCollideWorldBounds(true);
+
+        this.physics.add.collider(this.deadpool, this.enemy2, this.playerEnemy);
 
         //check the registry to see if the enemy has already been killed. If not create the enemy in the level and register it with the game
         // regName = `${level}_Enemies_${enemyNum}`;
@@ -77,10 +93,7 @@ export class Game extends Scene {
         // this.pickups = this.add.group();
         //this.convertObjects();
         // Leave for now -- will eventually be enemy class
-         this.enemy2 = this.physics.add.sprite(745, 450, 'slime_left').enableBody(false, true, true);
-         this.enemy2.setDisplaySize(120, 160);
-        // this.enemy.setFriction(1, 1);
-        // this.enemy.setCollideWorldBounds(true);
+         
 
         // // Add the static square bg first at 0,0 position
         // this.staticBg = this.add.image(0, 0, 'bg-static')
@@ -101,9 +114,16 @@ export class Game extends Scene {
     }
     update (time, delta) {
         this.deadpool.update(time, delta);
-        this.enemy.update(time, delta);
+        //this.enemy.update(time, delta);
+        this.slime.update(time, delta);
         this.cameras.main.setScroll(this.deadpool.x-340, 0);
-        this.enemy2.anims.play('slime_punch_left');
+        //this.enemy2.setVelocity(0);
+        
 
     }
+    playerEnemy(player, enemy){
+        if (enemy.alive){
+          player.damage(enemy.attack);
+        }
+      }
 }

@@ -93,9 +93,39 @@ export default function makeAnimations(scene) {
     });
     // Slime monster
     scene.anims.create({
+        key: 'slime_stand_left',
+        frames: [ {key:'slime_left', frame: 'stand1'}, {key:'slime_left', frame: 'stand2'}, {key:'slime_left', frame: 'stand3'}, {key:'slime_left', frame: 'stand4'}, {key:'slime_left', frame: 'stand5'}, {key:'slime_left', frame: 'stand6'} ],
+        frameRate: 10,
+        repeat: -1
+    });
+    scene.anims.create({
+        key: 'slime_stand_right',
+        frames: [ {key:'slime_right', frame: 'stand7'}, {key:'slime_right', frame: 'stand8'}, {key:'slime_right', frame: 'stand9'}, {key:'slime_right', frame: 'stand10'}, {key:'slime_right', frame: 'stand11'}, {key:'slime_right', frame: 'stand12'} ],
+        frameRate: 10,
+        repeat: -1
+    });
+    scene.anims.create({
+        key: 'slime_walk_left',
+        frames: [ {key:'slime_left', frame: 'walk1'}, {key:'slime_left', frame: 'walk2'}, {key:'slime_left', frame: 'walk3'}, {key:'slime_left', frame: 'walk4'}, {key:'slime_left', frame: 'walk5'}, {key:'slime_left', frame: 'walk6'}, {key:'slime_left', frame: 'walk7'}, {key:'slime_left', frame: 'walk8'} ],
+        frameRate: 10,
+        repeat: -1
+    });
+    scene.anims.create({
+        key: 'slime_walk_right',
+        frames: [ {key:'slime_right', frame: 'walk9'}, {key:'slime_right', frame: 'walk10'}, {key:'slime_right', frame: 'walk11'}, {key:'slime_right', frame: 'walk12'}, {key:'slime_right', frame: 'walk13'}, {key:'slime_right', frame: 'walk14'}, {key:'slime_right', frame: 'walk15'}, {key:'slime_right', frame: 'walk16'} ],
+        frameRate: 10,
+        repeat: -1
+    });
+    scene.anims.create({
         key: 'slime_punch_left',
         frames: [ {key:'slime_left', frame: 'punch1'}, {key:'slime_left', frame: 'punch2'}, {key:'slime_left', frame: 'punch3'}, {key:'slime_left', frame: 'punch4'}, {key:'slime_left', frame: 'punch5'}, {key:'slime_left', frame: 'punch6'}, {key:'slime_left', frame: 'punch7'}, {key:'slime_left', frame: 'punch8'} ],
         frameRate: 10,
-        repeat: -1
+        repeat: 0
+    });
+    scene.anims.create({
+        key: 'slime_punch_right',
+        frames: [ {key:'slime_right', frame: 'punch9'}, {key:'slime_right', frame: 'punch10'}, {key:'slime_right', frame: 'punch11'}, {key:'slime_right', frame: 'punch12'}, {key:'slime_right', frame: 'punch13'}, {key:'slime_right', frame: 'punch14'}, {key:'slime_right', frame: 'punch15'}, {key:'slime_right', frame: 'punch16'} ],
+        frameRate: 10,
+        repeat: 0
     });
 }
