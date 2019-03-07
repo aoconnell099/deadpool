@@ -14,6 +14,10 @@ export default class HealthBar {
         scene.add.existing(this.bar);
     }
 
+    destroy()
+    {
+        this.bar.destroy();
+    }
     setXY(x, y)
     {
         this.x = x;

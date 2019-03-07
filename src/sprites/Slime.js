@@ -5,19 +5,17 @@ export default class Slime extends Enemy {
         super(config);
         this.number;
         this.setTexture('slime_left');
-        //this.setFrame('stand1');
         this.type = 'slime_';
         this.body.setSize(32, 40, true);
         this.setDisplaySize(68, 86);
-        //this.anims.play('slime_stand_left');
         this.canAttack = true;
     }
 
     punch()
     {
-        console.log('punch');
-        this.scene.registry.set('health_current', this.scene.registry.get('health_current')-this.attack);
-        
+        this.scene.deadpool.damage(this.attack);
+        // this.scene.registry.set('health_current', this.scene.registry.get('health_current')-this.attack);
+        // this.scene.events.emit('healthChange');
     }
 
     enablePunch() {
@@ -27,7 +25,7 @@ export default class Slime extends Enemy {
         this.canMove = true;
     }
     resetAnim() {
-        if ( this.action === 'punch_' ) { // && this.canAttack === false
+        if ( this.action === 'punch_' ) {
             this.action = 'stand_';
         }
     }
@@ -48,8 +46,6 @@ export default class Slime extends Enemy {
         } else {
         this.moveY = 'none';
         }
-        
-
     }
 
     movement()
@@ -81,15 +77,16 @@ export default class Slime extends Enemy {
         this.body.setVelocityY(speed);
         }
     }
-    //let action = null;
+    
     if ((this.distanceToPlayerX <= this.stoppingDistance + 25 && this.distanceToPlayerY <= this.stoppingDistance-50) && this.canAttack) {
         this.action = 'punch_';
+        // Set canAttack and canMove to false so theres a delay between punches and movement after punches
         this.canAttack = false;
         this.canMove = false;
-        this.body.setVelocity(0);
+        this.body.setVelocity(0); // Stop the sprite from sliding along the screen when he "stops" to punch
         this.punch();
-        this.scene.time.addEvent({ delay: 5000, callback: this.enablePunch, callbackScope: this });
-        this.scene.time.addEvent({ delay: 1600, callback: this.enableMovement, callbackScope: this });
+        this.scene.time.addEvent({ delay: 4000, callback: this.enablePunch, callbackScope: this }); // 4 second delay between punches
+        this.scene.time.addEvent({ delay: 2000, callback: this.enableMovement, callbackScope: this }); // 2 second delay for movement after punch
     }
     else if ((this.body.velocity.x !== 0 || this.body.velocity.y !== 0) && this.canMove) {
         this.action = 'walk_';
@@ -98,12 +95,11 @@ export default class Slime extends Enemy {
     }
 
     let anim = this.type + this.action + this.direction;
-    console.log(anim);
-    //this.anims.stop();
+    // If the action is punch, then play the punch animation and change the animation back to stand after 800ms(the length of the animation)
+    // Else play anim
     if (this.action === 'punch_') {
         this.anims.play(anim, true);
         this.scene.time.addEvent({ delay: 800, callback: this.resetAnim, callbackScope: this });
-        //this.on('animationcomplete', this.resetAnim, this);
     } else {
     this.anims.play(anim, true);
     }

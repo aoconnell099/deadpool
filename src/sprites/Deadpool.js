@@ -11,7 +11,11 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         
         // Custom elements
         this.health = 100;
+        this.canHeal = true;
+        this.attacking = false;
+        this.meleeAttack = 20;
         this.alive = true;
+        this.action = 'stand_';
         this.direction = 'right';
         this.animPrefix = 'dp_';
         this.animSuffix = '';
@@ -38,6 +42,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
     }
 
     update(time, delta) {
+        
         this.body.setVelocity(0);
         let input = {
             left: this.keys.left.isDown,
@@ -49,7 +54,11 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             fire: this.keys.fire.isDown,
             melee: this.keys.melee.isDown
         };
-
+        if (this.canHeal) {
+            this.canHeal = false;
+            this.scene.time.addEvent({ delay: 1000, callback: this.enableHeal, callbackScope: this }); // 4 second delay between punches
+            this.heal();
+        }
          if (input.switchGun.isDown) {
             input.switchGun.on('up', (event) => { /* ... */ 
              //console.log(event);
@@ -114,19 +123,72 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             this.body.setVelocityY(360);
         }
 
-        let action = null;
-
-        if (this.body.velocity.x !== 0 || this.body.velocity.y !== 0) {
-            action = 'run_';
-        } else if (this.body.velocity.x === 0 && this.body.velocity.y === 0) {
-            action = 'stand_';
+        if (input.melee && !this.attacking) 
+        {
+            this.attacking = true;
+            this.action = 'attack_';
+            this.scene.time.addEvent({ delay: 500, callback: this.disableAttacking, callbackScope: this }); // 4 second delay between punches
+        }
+        else if ((this.body.velocity.x !== 0 || this.body.velocity.y !== 0) && !this.attacking) {
+            this.action = 'run_';
+        } else if ((this.body.velocity.x === 0 && this.body.velocity.y === 0) && !this.attacking) {
+            this.action = 'stand_';
         }
 
-        let anim = this.animPrefix + this.weapon + action + this.direction;
+        let anim = this.animPrefix + this.weapon + this.action + this.direction;
         
         // if (this.anims.currentAnim.key !== anim && !this.scene.physics.world.isPaused) {
         //     this.anims.play(anim);
         // }
+        //console.log(anim);
+        if (this.action === 'attack_') {
+            this.anims.play(anim, true);
+            this.scene.time.addEvent({ delay: 500, callback: this.resetAnim, callbackScope: this });
+        } else {
         this.anims.play(anim, true);
+        }
     }
+
+    heal() 
+    {
+        if (this.scene.registry.get('health_current') < 100) {
+            this.scene.registry.set('health_current', this.scene.registry.get('health_current')+1);
+            this.scene.events.emit('healthChange');
+        }
+    }
+    enableHeal() {
+        if (!this.canHeal) {
+            this.canHeal = true;
+        }
+    }
+    disableAttacking() {
+        if (this.attacking) {
+            this.attacking = false;
+        }
+    }
+    resetAnim() {
+        if ( this.action === 'attack_' ) {
+            this.action = 'stand_';
+        }
+    }
+    damage(amount) 
+    {
+        if (!this.damaged && this.alive) {
+        //this.hurtSound.play();
+        this.scene.cameras.main.shake(4);
+        this.damaged = true;
+        let health = this.scene.registry.get('health_current'); //find out the player's current health
+        this.scene.registry.set('health_current', health - amount);  //update the player's current health
+        this.scene.events.emit('healthChange'); //tell the scene the health has changed so the HUD is updated
+        this.setTint(0x8e2f15);
+        this.scene.time.addEvent({ delay: 1000, callback: this.normalize, callbackScope: this });
+        }
+    }
+  normalize() 
+  {
+    if (this.alive) {
+      this.damaged = false;
+      this.setTint(0xffffff);
+    }
+  }
 }

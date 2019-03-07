@@ -112,13 +112,13 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
               this.movement();
             }
       
-        //     // //kill this dude!
-        //     // if (this.health <= 0) {
-        //     //   this.deathSound.play();
-        //     //   this.alive = false;
-        //     //   this.setTint(0x2a0503);
-        //     //   this.scene.time.addEvent({ delay: 1000, callback: this.die, callbackScope: this });
-        //     // }
+            //kill this dude!
+            if (this.health <= 0) {
+              //this.deathSound.play();
+              this.alive = false;
+              this.setTint(0x2a0503);
+              this.scene.time.addEvent({ delay: 1000, callback: this.die, callbackScope: this });
+            }
       
         //     //hide if out of bounds
         //     // if (this.x > this.scene.physics.world.bounds.width) {
@@ -208,10 +208,27 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
   {
     if (!this.damaged) {
       this.health -= amount;
+      this.hp.decrease(amount);
       this.damaged = true;
       this.setTint(0x8e2f15);
+      this.knockback();
       this.scene.time.addEvent({ delay: 1000, callback: this.normalize, callbackScope: this });
     }
+  }
+
+  knockback()
+  {
+    if (this.x > this.scene.deadpool.x) {
+      this.body.setVelocityX(600);
+    } else if (this.x < this.scene.deadpool.x) {
+      this.body.setVelocityX(-600);
+    }
+    this.scene.time.addEvent({ delay: 200, callback: this.stopMoving, callbackScope: this });
+  }
+
+  stopMoving()
+  {
+    this.body.setVelocity(0);
   }
 
   normalize() 
@@ -227,9 +244,10 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
 
   die()
   {
-    this.deathRegister();
-    this.exclamation.destroy();
+    //this.deathRegister();
+    //this.exclamation.destroy();
     //this.dropLoot();
+    this.hp.destroy();
     this.destroy();
   }
 

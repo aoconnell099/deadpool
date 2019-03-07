@@ -68,7 +68,7 @@ export class Game extends Scene {
         // this.enemy2.setFriction(1, 1);
         // this.enemy2.setCollideWorldBounds(true);
 
-        this.physics.add.collider(this.deadpool, this.enemy2, this.playerEnemy);
+        this.physics.add.collider(this.deadpool, this.slime, this.playerEnemy);
 
         //check the registry to see if the enemy has already been killed. If not create the enemy in the level and register it with the game
         // regName = `${level}_Enemies_${enemyNum}`;
@@ -121,9 +121,15 @@ export class Game extends Scene {
         
 
     }
+    
     playerEnemy(player, enemy){
-        if (enemy.alive){
-          player.damage(enemy.attack);
+        enemy.body.setVelocity(0);
+        if (player.alive && player.attacking){
+          enemy.damage(player.meleeAttack);
+          //enemy.body.setVelocity(50);
+          //this.time.addEvent({ delay: 500, callback: () => {enemy.body.setVelocity(0);}, callbackScope: this });
         }
       }
+      //(enemy) => {enemy.body.setVelocity(0);}
+    
 }
