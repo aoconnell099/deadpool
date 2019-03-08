@@ -6,8 +6,8 @@ export default class Slime extends Enemy {
         this.number;
         this.setTexture('slime_left');
         this.type = 'slime_';
-        this.body.setSize(32, 40, true);
-        this.setDisplaySize(68, 86);
+        this.body.setSize(35, 35, true).setOffset(0, 0);
+        this.setDisplaySize(60, 80);
         this.canAttack = true;
     }
 

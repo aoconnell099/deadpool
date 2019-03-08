@@ -10,7 +10,7 @@ export class Game extends Scene {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: true
+                    debug: false
                 }
             }
         })
@@ -39,12 +39,20 @@ export class Game extends Scene {
         //     'Score: ' + this.data.get('score')
         // ]);
         //this.scene.launch('HUD'); //launch HUD
+
+        this.enemies = this.add.group();
+        this.enemies.runChildUpdate = true;
+        this.enemyAttack = this.add.group();
+        this.enemyAttack.runChildUpdate = true;
+
         // Add deadpool to the game
         this.deadpool = new Deadpool({
             scene: this,
             x: 500,
             y: 450,
         });
+        this.playerAttack = this.add.group(); //create attack group to hold player's fireballs
+        this.playerAttack.runChildUpdate = true;
         //this.deadpool.setDisplaySize(24, 32);//84, 102
 
         // this.enemy = new Enemy({
@@ -54,11 +62,12 @@ export class Game extends Scene {
         // });
         // this.enemy.setDisplaySize(100, 120);
 
-        this.slime = new Slime({
+        let slime = new Slime({
             scene: this,
             x: 1600,
             y: 450,
         });
+        this.enemies.add(slime);
         //this.slime.setSize(84, 102, true);
         //this.slime.setDisplaySize(84, 102);
 
@@ -68,7 +77,8 @@ export class Game extends Scene {
         // this.enemy2.setFriction(1, 1);
         // this.enemy2.setCollideWorldBounds(true);
 
-        this.physics.add.collider(this.deadpool, this.slime, this.playerEnemy);
+        this.physics.add.collider(this.deadpool, this.enemies, this.playerEnemy);
+        this.physics.add.collider(this.playerAttack, this.enemies, this.bulletEnemy);
 
         //check the registry to see if the enemy has already been killed. If not create the enemy in the level and register it with the game
         // regName = `${level}_Enemies_${enemyNum}`;
@@ -115,21 +125,30 @@ export class Game extends Scene {
     update (time, delta) {
         this.deadpool.update(time, delta);
         //this.enemy.update(time, delta);
-        this.slime.update(time, delta);
+        //this.slime.update(time, delta);
         this.cameras.main.setScroll(this.deadpool.x-340, 0);
         //this.enemy2.setVelocity(0);
         
 
     }
     
-    playerEnemy(player, enemy){
-        enemy.body.setVelocity(0);
+    playerEnemy(player, enemy)
+    {    
         if (player.alive && player.attacking){
           enemy.damage(player.meleeAttack);
           //enemy.body.setVelocity(50);
           //this.time.addEvent({ delay: 500, callback: () => {enemy.body.setVelocity(0);}, callbackScope: this });
         }
-      }
-      //(enemy) => {enemy.body.setVelocity(0);}
+        else {
+            enemy.body.setVelocity(0);
+        }
+    }
+
+    bulletEnemy(bullet, enemy)
+    {
+        enemy.body.setVelocity(0);
+        bullet.enemyCollide(enemy);
+    }
+      
     
 }

@@ -32,6 +32,7 @@ export class Preloader extends Scene {
         this.load.spritesheet('black', 'assets/black1.png', { frameWidth: 439, frameHeight: 284 });
         this.load.image('city', 'assets/backround.png');
         this.load.image('road', 'assets/ground.png');
+        this.load.image('bullet', 'assets/bullet.png');
         this.load.atlas('deadpool', 'assets/deadpool_spritesheet.png', 'assets/deadpool_spritesTP.json');
         this.load.atlas('slime_left', 'assets/slime_spritesheet_left.png', 'assets/slime_spritesheet_left.json');
         this.load.atlas('slime_right', 'assets/slime_spritesheet_right.png', 'assets/slime_spritesheet_right.json');

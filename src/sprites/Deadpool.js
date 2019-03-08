@@ -1,4 +1,5 @@
 import { Sprite } from 'phaser';
+import Bullet from './Bullet';
 //Phaser.GameObjects.
 export default class Deadpool extends Phaser.GameObjects.Sprite {        
     constructor(config) { 
@@ -6,6 +7,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         super(config.scene, config.x, config.y, 'deadpool', 'stand_right');
         config.scene.physics.world.enable(this);
         this.body.setCollideWorldBounds(true);
+        this.body.setImmovable(true);
         this.scene = config.scene;
         this.setDisplaySize(84, 102);
         
@@ -122,11 +124,24 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         {
             this.body.setVelocityY(360);
         }
-
-        if (input.melee && !this.attacking) 
+        if (input.fire && !this.isShooting) {
+            this.isShooting = true;
+            this.action = 'shoot_';
+            this.weapon = 'pistol_';
+            let bullet = new Bullet({
+                scene: this.scene,
+                x: this.x, 
+                y: this.y,
+                dir: this.direction
+              });
+            this.scene.playerAttack.add(bullet);
+            this.scene.time.addEvent({ delay: 200, callback: this.disableShooting, callbackScope: this }); // 4 second delay between punches
+        } 
+        else if (input.melee && !this.attacking) 
         {
             this.attacking = true;
             this.action = 'attack_';
+            this.weapon = 'swords_';
             this.scene.time.addEvent({ delay: 500, callback: this.disableAttacking, callbackScope: this }); // 4 second delay between punches
         }
         else if ((this.body.velocity.x !== 0 || this.body.velocity.y !== 0) && !this.attacking) {
@@ -142,10 +157,20 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         // }
         //console.log(anim);
         if (this.action === 'attack_') {
+            if (this.direction === 'right') {
+                this.body.setOffset(75, 0);
+            }
+            else if (this.direction === 'left') {
+                this.body.setOffset(-8, 0);
+            }
             this.anims.play(anim, true);
-            this.scene.time.addEvent({ delay: 500, callback: this.resetAnim, callbackScope: this });
-        } else {
-        this.anims.play(anim, true);
+            this.scene.time.addEvent({ delay: 500, callback: this.resetSwords, callbackScope: this });
+        } else if (this.action === 'shoot_') {
+            this.anims.play(anim, true);
+            this.scene.time.addEvent({ delay: 200, callback: this.resetShoot, callbackScope: this });
+        }
+        else {
+            this.anims.play(anim, true);
         }
     }
 
@@ -166,9 +191,23 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             this.attacking = false;
         }
     }
-    resetAnim() {
-        if ( this.action === 'attack_' ) {
+    disableShooting() {
+        if (this.isShooting) {
+            this.isShooting = false;
+        }
+    }
+    resetSwords() {
+        if (!this.attacking) { //this.action === 'attack_' 
+            this.body.setOffset(0);
             this.action = 'stand_';
+            this.weapon = 'unarmed_'
+        }
+    }
+    resetShoot() {
+        if (!this.isShooting) { //this.action === 'attack_' 
+            //this.body.setOffset(0);
+            this.action = 'stand_';
+            this.weapon = 'unarmed_'
         }
     }
     damage(amount) 

@@ -19,8 +19,8 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         this.action;
         // Enemy config from phaser tilemap pack
         this.number = config.number; // used to track which number enemy they are
-        this.body.setDrag(8, 8); // Dont need for now
-        this.body.setBounce(.5, .5); // Dont need for now
+        this.body.setDrag(10, 10); // Dont need for now
+        // this.body.setBounce(.5, .5); // Dont need for now
         this.body.setCollideWorldBounds(true);
         this.health = 100; // Base health for all enemies is 100. Health for specialized is multiplied by whatever seems fit (e.g. this.health * 1.5)
         this.alive = true; // Tracks if living for movement and screen removal puropses
@@ -209,21 +209,23 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     if (!this.damaged) {
       this.health -= amount;
       this.hp.decrease(amount);
-      this.damaged = true;
       this.setTint(0x8e2f15);
-      this.knockback();
+      this.knockback(amount);
+      this.damaged = true;
       this.scene.time.addEvent({ delay: 1000, callback: this.normalize, callbackScope: this });
     }
   }
 
-  knockback()
+  knockback(amount) // Amount is based off of the damage given (melee does 15, bullets do 5)
   {
-    if (this.x > this.scene.deadpool.x) {
-      this.body.setVelocityX(600);
-    } else if (this.x < this.scene.deadpool.x) {
-      this.body.setVelocityX(-600);
+    if (!this.damaged) {
+      if (this.x > this.scene.deadpool.x) {
+        this.body.setVelocityX(amount * 25);
+      } else if (this.x < this.scene.deadpool.x) {
+        this.body.setVelocityX(-amount * 25); 
+      }
+      this.scene.time.addEvent({ delay: 200, callback: this.stopMoving, callbackScope: this });
     }
-    this.scene.time.addEvent({ delay: 200, callback: this.stopMoving, callbackScope: this });
   }
 
   stopMoving()
