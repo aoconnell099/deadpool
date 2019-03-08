@@ -2,6 +2,7 @@ import phaser, { Scene } from 'phaser';
 import Deadpool from '../sprites/Deadpool';
 import Enemy from '../sprites/Enemy';
 import Slime from '../sprites/Slime';
+import Shooter from '../sprites/Shooter';
 
 export class Game extends Scene {
     constructor () {
@@ -10,7 +11,7 @@ export class Game extends Scene {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: false
+                    debug: true
                 }
             }
         })
@@ -61,13 +62,35 @@ export class Game extends Scene {
         //     y: 450,
         // });
         // this.enemy.setDisplaySize(100, 120);
-
-        let slime = new Slime({
-            scene: this,
-            x: 1600,
-            y: 450,
-        });
-        this.enemies.add(slime);
+        let i;
+        for (i=0; i<5; i++) {
+            let spawnX = Phaser.Math.Between(900,2000);
+            let spawnY = Phaser.Math.Between(300,750);
+            console.log('spawnX');
+            console.log(spawnX);
+            console.log('spawnY');
+            console.log(spawnY);
+            let slime = new Slime({
+                scene: this,
+                x: spawnX,
+                y: spawnY,
+            });
+            this.enemies.add(slime);
+        }
+        for (i=0; i<5; i++) {
+            let spawnX = Phaser.Math.Between(900,2000);
+            let spawnY = Phaser.Math.Between(300,750);
+            console.log('spawnX');
+            console.log(spawnX);
+            console.log('spawnY');
+            console.log(spawnY);
+            let shooter = new Shooter({
+                scene: this,
+                x: spawnX,
+                y: spawnY,
+            });
+            this.enemies.add(shooter);
+        }
         //this.slime.setSize(84, 102, true);
         //this.slime.setDisplaySize(84, 102);
 
@@ -79,6 +102,7 @@ export class Game extends Scene {
 
         this.physics.add.collider(this.deadpool, this.enemies, this.playerEnemy);
         this.physics.add.collider(this.playerAttack, this.enemies, this.bulletEnemy);
+        this.physics.add.collider(this.deadpool, this.enemyAttack, this.bulletPlayer);
 
         //check the registry to see if the enemy has already been killed. If not create the enemy in the level and register it with the game
         // regName = `${level}_Enemies_${enemyNum}`;
@@ -149,6 +173,11 @@ export class Game extends Scene {
         enemy.body.setVelocity(0);
         bullet.enemyCollide(enemy);
     }
-      
+    // Dont really need secon function but for readability left in
+    bulletPlayer(player, bullet) 
+    {
+        //enemy.body.setVelocity(0);
+        bullet.enemyCollide(player);
+    }  
     
 }

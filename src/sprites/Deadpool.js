@@ -16,6 +16,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         this.canHeal = true;
         this.attacking = false;
         this.meleeAttack = 20;
+        this.shootingAttack = 5;
         this.alive = true;
         this.action = 'stand_';
         this.direction = 'right';
@@ -132,6 +133,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 scene: this.scene,
                 x: this.x, 
                 y: this.y,
+                damage: this.shootingAttack,
                 dir: this.direction
               });
             this.scene.playerAttack.add(bullet);

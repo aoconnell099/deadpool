@@ -1,5 +1,6 @@
 import { Sprite } from 'phaser';
 import HealthBar from './HealthBar'
+import Bullet from './Bullet';
 // import { Math } from 'phaser';
 
 export default class Enemy extends Phaser.GameObjects.Sprite {
@@ -19,8 +20,8 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         this.action;
         // Enemy config from phaser tilemap pack
         this.number = config.number; // used to track which number enemy they are
-        this.body.setDrag(10, 10); // Dont need for now
-        // this.body.setBounce(.5, .5); // Dont need for now
+        // this.body.setDrag(10, 10); // Dont need for now
+        // this.body.setBounce(2, 2); // Dont need for now
         this.body.setCollideWorldBounds(true);
         this.health = 100; // Base health for all enemies is 100. Health for specialized is multiplied by whatever seems fit (e.g. this.health * 1.5)
         this.alive = true; // Tracks if living for movement and screen removal puropses
@@ -212,7 +213,12 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
       this.setTint(0x8e2f15);
       this.knockback(amount);
       this.damaged = true;
-      this.scene.time.addEvent({ delay: 1000, callback: this.normalize, callbackScope: this });
+      this.scene.time.addEvent({ delay: 600, callback: this.normalize, callbackScope: this });
+    }
+    else {
+      if (this.health > 0) {
+        this.scene.time.addEvent({ delay: 150, callback: this.stopMoving, callbackScope: this });
+      }
     }
   }
 
@@ -220,11 +226,13 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
   {
     if (!this.damaged) {
       if (this.x > this.scene.deadpool.x) {
-        this.body.setVelocityX(amount * 25);
+        this.body.setVelocityX(amount * 30);
       } else if (this.x < this.scene.deadpool.x) {
-        this.body.setVelocityX(-amount * 25); 
+        this.body.setVelocityX(-amount * 30); 
       }
-      this.scene.time.addEvent({ delay: 200, callback: this.stopMoving, callbackScope: this });
+      if (this.health > 0) {
+        this.scene.time.addEvent({ delay: 150, callback: this.stopMoving, callbackScope: this });
+      }
     }
   }
 
@@ -249,6 +257,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     //this.deathRegister();
     //this.exclamation.destroy();
     //this.dropLoot();
+    //this.body.setVelocity(0);
     this.hp.destroy();
     this.destroy();
   }
@@ -320,32 +329,46 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     //     }
     // }
 
+
     fire ()
     {
-        var target = (this.color === 'blue') ? getGreen() : getBlue();
+        let target = this.scene.deadpool;
 
-        if (target && this.alive)
+        if (this.alive)
         {
-            this.play(this.color + 'Attack');
+            //this.anims.play(this.color + 'Attack');
 
-            var offset = (this.color === 'blue') ? 20 : -20;
-            var targetX = (this.color === 'blue') ? target.x + 30 : target.x - 30;
+            // var offset = (this.color === 'blue') ? 20 : -20;
+            
 
-            this.missile.setPosition(this.x + offset, this.y + 20).setVisible(true);
+            //this.missile.setPosition(this.x + offset, this.y + 20).setVisible(true);
+
+            let bullet = new Bullet({
+              scene: this.scene,
+              x: this.x, 
+              y: this.y,
+              damage: Phaser.Math.Between(2, 8),
+              dir: this.direction
+            });
+            this.scene.enemyAttack.add(bullet);
+
+            let targetX = this.scene.deadpool.x;
+            let targetY = this.scene.deadpool.y;
 
             this.scene.tweens.add({
-                targets: this.missile,
+                targets: bullet,
                 x: targetX,
+                y: targetY,
                 ease: 'Linear',
                 duration: 500,
                 onComplete: function (tween, targets) {
-                    targets[0].setVisible(false);
+                    bullet.destroy();
                 }
             });
 
-            target.damage(Phaser.Math.Between(2, 8));
+            //target.damage(Phaser.Math.Between(2, 8));
 
-            this.timer = this.scene.time.addEvent({ delay: Phaser.Math.Between(1000, 3000), callback: this.fire, callbackScope: this });
+            //this.timer = this.scene.time.addEvent({ delay: Phaser.Math.Between(1000, 3000), callback: this.fire, callbackScope: this });
         }
     }
 
