@@ -8,7 +8,7 @@ export default class Shooter extends Enemy {
         this.anims.play('blonde_1_stand_left');
         //this.setTexture('blonde_1_stand_left');
         this.type = 'blonde_1_';
-        this.detectionDistance = 800;
+        this.detectionDistance = 600;
         this.stoppingDistance = 350;
         //this.body.setSize(62, 84, true).setOffset(0, 0);
         this.setDisplaySize(84, 102);
