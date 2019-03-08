@@ -13,7 +13,7 @@ export class Game extends Scene {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: true
+                    debug: false
                 }
             }
         })
