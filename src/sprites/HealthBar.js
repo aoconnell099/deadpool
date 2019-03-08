@@ -6,7 +6,8 @@ export default class HealthBar {
 
         this.x = x;
         this.y = y;
-        this.value = 100;
+        this.health = 100;
+        this.maxHealth = 100;
         this.p = 76 / 100;
 
         this.draw();
@@ -14,6 +15,11 @@ export default class HealthBar {
         scene.add.existing(this.bar);
     }
 
+    setHealth(newHealth)
+    {
+        this.health = newHealth;
+        this.maxHealth = newHealth
+    }
     destroy()
     {
         this.bar.destroy();
@@ -33,32 +39,31 @@ export default class HealthBar {
 
     decrease (amount)
     {
-        this.value -= amount;
+        this.health -= amount;
 
-        if (this.value < 0)
+        if (this.health < 0)
         {
-            this.value = 0;
+            this.health = 0;
         }
 
         this.draw();
 
-        return (this.value === 0);
+        return (this.health === 0);
     }
 
     draw ()
     {
         this.bar.clear();
 
-        //  BG
+        //  Background
         this.bar.fillStyle(0x000000);
         this.bar.fillRect(this.x, this.y, 80, 16);
 
         //  Health
-
         this.bar.fillStyle(0xffffff);
         this.bar.fillRect(this.x + 2, this.y + 2, 76, 12);
 
-        if (this.value < 30)
+        if (this.health < 30)
         {
             this.bar.fillStyle(0xff0000);
         }
@@ -67,7 +72,7 @@ export default class HealthBar {
             this.bar.fillStyle(0x00ff00);
         }
 
-        var d = Math.floor(this.p * this.value);
+        var d = Math.floor(this.p * ((this.health/this.maxHealth)) * 100);
 
         this.bar.fillRect(this.x + 2, this.y + 2, d, 12);
     }

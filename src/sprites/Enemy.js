@@ -8,87 +8,59 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     constructor (config) //scene, color, x, y
     {
         super(config.scene, config.x, config.y, 'blonde');
-        config.scene.physics.world.enable(this);
+        // Assign the correct scene and set the physics rules
         this.scene = config.scene;
+        config.scene.physics.world.enable(this);
         this.setPosition(config.x, config.y);
-        this.scene.add.existing(this);
-        //this.anims.play('blonde_1_stand_left'); // can probably remove soon once more enemies are added
+        this.body.setCollideWorldBounds(true);
+        // Create a new healthbar for the enemy
         this.hp = new HealthBar(this.scene, config.x - 30, config.y - 80);
 
-        this.direction = 'left';
-        this.type = 'blonde_1_';
-        this.action;
-        // Enemy config from phaser tilemap pack
-        this.number = config.number; // used to track which number enemy they are
-        // this.body.setDrag(10, 10); // Dont need for now
-        // this.body.setBounce(2, 2); // Dont need for now
-        this.body.setCollideWorldBounds(true);
+        // Custom elements
         this.health = 100; // Base health for all enemies is 100. Health for specialized is multiplied by whatever seems fit (e.g. this.health * 1.5)
-        this.alive = true; // Tracks if living for movement and screen removal puropses
         this.attack = 15; // Attack power -- subject to change
+        this.walk = 100; // Base walking speed for enemies
+        this.run = 200; // Base running speed for enemies
+        this.detectionDistance = 300; // Base detection distance for enemies
+        this.stoppingDistance = 100; // Base stopping distance to attack for enemies
+        this.alive = true; // Tracks if living for movement and screen removal puropses
         this.damaged = false; // For playing the damaged animation and stopping enemy attack for a moment
-        this.canExclaim = true; // Dont need unless get an exclaim sprite for 
+        // Movement AI 
         this.playerDetected = false;
-        this.detectionDistance = 300;
-        this.stoppingDistance = 100;
         this.canMove = true;
         this.canDecide = true; // used for if he can decide to atttack when he is not injured
         this.moveX = 'none';
         this.moveY = 'none';
-        this.walk = 100;
-        this.run = 200;
+        this.direction = 'left';
+        this.type = 'blonde_1_';
+        this.action;
 
-        // Mostly unnecessary but dont want to get rid of yet
+        // Unnecessary for now
+        this.canExclaim = true; // Dont need unless get an exclaim sprite for 
+        this.number = config.number; // used to track which number enemy they are
 
-        // this.exclaimSound = this.scene.sound.add('enemyExclaim');
-        // this.exclaimSound.setVolume(.2);
-        // this.exclamation = this.scene.add.image(this.x, this.y - 10, 'atlas', 'exclamation');
-        // this.exclamation.alpha = 0;
-        // this.deathSound = this.scene.sound.add('enemyDeathSFX');
-        // this.deathSound.setVolume(.4);
-        // this.dropSound = this.scene.sound.add('itemDropSFX');
-        // this.dropSound.setVolume(.2);
-        // this.scene.add.existing(this);
-
-        //this.on('animationcomplete', this.animComplete, this);
-        //this.play(this.color + 'Idle');
-        //var hx = (this.color === 'blue') ? 110 : -40;
-        //var hx = 110;
-        //this.timer = scene.time.addEvent({ delay: Phaser.Math.Between(1000, 3000), callback: this.fire, callbackScope: this });
-        //this.color = config.color;
-        //this.setTexture('elves');
+        this.scene.add.existing(this);
     }
 
     update (time, delta)
     {
-        //super.preUpdate(time, delta);
-        //this.body.setVelocity(90, 0);
         this.hp.setXY(this.x-30, this.y-80);
- 
+        // If the enemy's alive, not currently damaged, and is within detection range of the player,
+        // then track the player with detectBehavior. Else randomly decide where to move every half 
+        // second and call movement
         if (this.alive) {
-            //this.exclamation.setPosition(this.x, this.y - 12);
             this.playerDetected = this.detectPlayer();
             if (!this.damaged) {
               if (this.playerDetected) {
-                // if (this.canExclaim) {
-                //   this.canExclaim = false;
-                //   //this.exclaimSound.play();
-                //   //this.exclamation.alpha = 1;
-                //   //this.scene.time.addEvent({ delay: 500, callback: this.hideExclaim, callbackScope: this });
-                // }
-                //call the player detected behavior
                 this.detectBehavior();
               } else {
-                // if (!this.canExclaim){
-                //   this.canExclaim = true;
-                // }
                 //decide where to move
                 if (this.canDecide) {
                   this.canDecide = false;
                   this.scene.time.addEvent({ delay: 500, callback: this.resetDecide, callbackScope: this });
-                  //let decisionX = Phaser.Math.Between(1,4); //broken in current version of phaser
+                  //let decisionX = Phaser.Math.Between(1,4); // Another way of doing it with provided Phaser math class
                   let decisionX = Math.floor(Math.random() * 4) + 1;
-                  //console.log(decisionX);
+
                   if (decisionX === 1 || decisionX === 2) {
                     this.moveX = 'none';
                   } else if (decisionX === 3) {
@@ -96,9 +68,9 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
                   } else if (decisionX === 4) {
                     this.moveX = 'right';
                   }
-                  //let decisionY = Phaser.Math.Between(1,4);  //broken in current version of phaser
-                  //console.log(decisionY);
+                  
                   let decisionY = Math.floor(Math.random() * 4) + 1;
+
                   if (decisionY === 1 || decisionY === 2) {
                     this.moveY = 'none';
                   } else if (decisionY === 3) {
@@ -108,16 +80,15 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
                   }
                 }
               }
-      
-              //move based on above behavior
+              // Move based on above behavior
               this.movement();
             }
       
-            //kill this dude!
+            // If the enemy is still alive and also currently damaged, check if their health is below 0 and kill them if so
             if (this.health <= 0) {
-              //this.deathSound.play();
               this.alive = false;
               this.setTint(0x2a0503);
+              this.scene.time.addEvent({ delay: 150, callback: this.stopMoving, callbackScope: this });
               this.scene.time.addEvent({ delay: 1000, callback: this.die, callbackScope: this });
             }
       
@@ -247,129 +218,39 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     this.setTint(0xffffff);
   }
 
-  hideExclaim() 
-  {
-    this.exclamation.alpha = 0;
-  }
-
   die()
   {
-    //this.deathRegister();
-    //this.exclamation.destroy();
-    //this.dropLoot();
-    //this.body.setVelocity(0);
     this.hp.destroy();
     this.destroy();
   }
 
-  deathRegister()
+  fire ()
   {
-    this.scene.registry.set(`${this.scene.registry.get('load')}_Enemies_${this.number}`, 'dead'); //register this enemy as dead so it is not added to future instances of this level.
-  }
+    if (this.alive)
+    {
+      let bullet = new Bullet({
+        scene: this.scene,
+        x: this.x, 
+        y: this.y,
+        damage: Phaser.Math.Between(2, 8),
+        dir: this.direction
+      });
+      this.scene.enemyAttack.add(bullet);
 
-  dropLoot() 
-  {
-    let decision = Phaser.Math.RND.integerInRange(1, 20);
-    if (decision === 1 ) {
-      let heart = new Heart({
-        scene: this.scene,
-        x: this.x, 
-        y: this.y,
-        number: 0
+      let targetX = this.scene.deadpool.x;
+      let targetY = this.scene.deadpool.y;
+
+      this.scene.tweens.add({
+          targets: bullet,
+          x: targetX,
+          y: targetY,
+          ease: 'Linear',
+          duration: 500,
+          onComplete: function (tween, targets) {
+              bullet.destroy();
+          }
       });
-      this.scene.pickups.add(heart);
-      this.dropSound.play();
-    }  else if (decision === 2 ) {
-      let jug = new Jug({
-        scene: this.scene,
-        x: this.x, 
-        y: this.y,
-        number: 0
-      });
-      this.scene.pickups.add(jug);
-      this.dropSound.play();
-    } else if (decision > 2 && decision <= 6) {
-      let potion = new Potion({
-        scene: this.scene,
-        x: this.x, 
-        y: this.y,
-        number: 0
-      });
-      this.scene.pickups.add(potion);
-      this.dropSound.play();
-    } else if (decision > 6 && decision <= 10) {
-      let meat = new Meat({
-        scene: this.scene,
-        x: this.x, 
-        y: this.y,
-        number: 0
-      });
-      this.scene.pickups.add(meat);
-      this.dropSound.play();
     }
   }
-
-    animComplete (animation)
-    {
-        // if (animation.key === this.color + 'Attack')
-        // {
-        //     this.play(this.color + 'Idle');
-        // }
-    }
-
-    // damage (amount)
-    // {
-    //     if (this.hp.decrease(amount))
-    //     {
-    //         this.alive = false;
-
-    //         // this.play(this.color + 'Dead');
-
-    //         // (this.color === 'blue') ? bluesAlive-- : greensAlive--;
-    //     }
-    // }
-
-
-    fire ()
-    {
-        let target = this.scene.deadpool;
-
-        if (this.alive)
-        {
-            //this.anims.play(this.color + 'Attack');
-
-            // var offset = (this.color === 'blue') ? 20 : -20;
-            
-
-            //this.missile.setPosition(this.x + offset, this.y + 20).setVisible(true);
-
-            let bullet = new Bullet({
-              scene: this.scene,
-              x: this.x, 
-              y: this.y,
-              damage: Phaser.Math.Between(2, 8),
-              dir: this.direction
-            });
-            this.scene.enemyAttack.add(bullet);
-
-            let targetX = this.scene.deadpool.x;
-            let targetY = this.scene.deadpool.y;
-
-            this.scene.tweens.add({
-                targets: bullet,
-                x: targetX,
-                y: targetY,
-                ease: 'Linear',
-                duration: 500,
-                onComplete: function (tween, targets) {
-                    bullet.destroy();
-                }
-            });
-
-            //target.damage(Phaser.Math.Between(2, 8));
-
-            //this.timer = this.scene.time.addEvent({ delay: Phaser.Math.Between(1000, 3000), callback: this.fire, callbackScope: this });
-        }
-    }
 
 }

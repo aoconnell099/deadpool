@@ -1,33 +1,38 @@
-import { Sprite } from 'phaser';
 import Bullet from './Bullet';
-//Phaser.GameObjects.
+
 export default class Deadpool extends Phaser.GameObjects.Sprite {        
     constructor(config) { 
-        console.log('before super');
         super(config.scene, config.x, config.y, 'deadpool', 'stand_right');
+        // Assign the correct scene and set the physics rules
+        this.scene = config.scene;
         config.scene.physics.world.enable(this);
         this.body.setCollideWorldBounds(true);
         this.body.setImmovable(true);
-        this.scene = config.scene;
         this.setDisplaySize(84, 102);
         
         // Custom elements
         this.health = 100;
-        this.canHeal = true;
-        this.attacking = false;
+        this.speed = 360;
         this.meleeAttack = 20;
         this.shootingAttack = 5;
         this.alive = true;
+        this.canHeal = true;
+        this.isAttacking = false;
+        this.isShooting = false;
+        // Movement elements
         this.action = 'stand_';
         this.direction = 'right';
         this.animPrefix = 'dp_';
         this.animSuffix = '';
+        // Weapon elements
+        // NOTE -- Dont need but leaving in for now in case game design changes to hold more than one weapon
         this.weapon = 'unarmed_';
         this.weaponIndex = 0;
         this.weapons = [];
         this.weapons.push(this.weapon);
         this.weapons.push('swords_');
 
+        // Add the control keys for deadpool
         this.keys = {
             jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACEBAR),
             //jump2: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X),
@@ -40,8 +45,6 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             down: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
         };
         this.scene.add.existing(this);     
-        this.anims.play('dp_unarmed_stand_right');  
-        console.log(this.weapons);
     }
 
     update(time, delta) {
@@ -59,24 +62,24 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         };
         if (this.canHeal) {
             this.canHeal = false;
-            this.scene.time.addEvent({ delay: 1000, callback: this.enableHeal, callbackScope: this }); // 4 second delay between punches
+            this.scene.time.addEvent({ delay: 1000, callback: this.enableHeal, callbackScope: this }); // 1 second delay between heal
             this.heal();
         }
-         if (input.switchGun.isDown) {
+        // Again probably dont need as the need to switch weapons is gone
+        if (input.switchGun.isDown) {
             input.switchGun.on('up', (event) => { /* ... */ 
-             //console.log(event);
-            if (this.weaponIndex === 0 && this.weapons.length === 1) {
-                this.weaponIndex = 0;
-                this.weapon = this.weapons[this.weaponIndex];
-            }
-            else if (this.weaponIndex > 0 && this.weaponIndex === this.weapons.length - 1) {
-                this.weaponIndex = 0;
-                this.weapon = this.weapons[this.weaponIndex];
-            }
-            else if (this.weaponIndex < (this.weapons.length - 1)) {
-                this.weaponIndex++; 
-                this.weapon =this.weapons[this.weaponIndex];
-            }
+                if (this.weaponIndex === 0 && this.weapons.length === 1) {
+                    this.weaponIndex = 0;
+                    this.weapon = this.weapons[this.weaponIndex];
+                }
+                else if (this.weaponIndex > 0 && this.weaponIndex === this.weapons.length - 1) {
+                    this.weaponIndex = 0;
+                    this.weapon = this.weapons[this.weaponIndex];
+                }
+                else if (this.weaponIndex < (this.weapons.length - 1)) {
+                    this.weaponIndex++; 
+                    this.weapon =this.weapons[this.weaponIndex];
+                }
             });
         }
 
@@ -86,16 +89,16 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             // Left and up or down plays the left animation. Moving only up or down plays the right animation
             if (input.up)
             {
-                this.body.setVelocityY(-360);
-                this.body.setVelocityX(-360);
+                this.body.setVelocityY(-this.speed);
+                this.body.setVelocityX(-this.speed);
             }
             else if (input.down)
             {
-                this.body.setVelocityY(360);
-                this.body.setVelocityX(-360);
+                this.body.setVelocityY(this.speed);
+                this.body.setVelocityX(-this.speed);
             }
             else {
-                this.body.setVelocityX(-360);
+                this.body.setVelocityX(-this.speed);
             }
         }
         else if (input.right)
@@ -103,32 +106,35 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             this.direction = 'right';
             if (input.up)
             {
-                this.body.setVelocityY(-360);
-                this.body.setVelocityX(360);
+                this.body.setVelocityY(-this.speed);
+                this.body.setVelocityX(this.speed);
             }
             else if (input.down)
             {
-                this.body.setVelocityY(360);
-                this.body.setVelocityX(360);
+                this.body.setVelocityY(this.speed);
+                this.body.setVelocityX(this.speed);
             }
             else {
-                this.body.setVelocityX(360);
+                this.body.setVelocityX(this.speed);
 
             }
         }
         // Holding up or down plays the right animation
         else if (input.up)
         {
-            this.body.setVelocityY(-360);
+            this.body.setVelocityY(-this.speed);
         }
         else if (input.down)
         {
-            this.body.setVelocityY(360);
+            this.body.setVelocityY(this.speed);
         }
+        // First check to see if deadpool is shooting
         if (input.fire && !this.isShooting) {
             this.isShooting = true;
+            // Only need these two lines while using the weapon method of calling the anims
             this.action = 'shoot_';
             this.weapon = 'pistol_';
+            // Add the bullet to the game and player Attack group
             let bullet = new Bullet({
                 scene: this.scene,
                 x: this.x, 
@@ -137,27 +143,31 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 dir: this.direction
               });
             this.scene.playerAttack.add(bullet);
-            this.scene.time.addEvent({ delay: 200, callback: this.disableShooting, callbackScope: this }); // 4 second delay between punches
+            // 1/5 second delay between shots
+            this.scene.time.addEvent({ delay: 200, callback: this.disableShooting, callbackScope: this });
         } 
-        else if (input.melee && !this.attacking) 
+        // Next check for melee attack
+        else if (input.melee && !this.isAttacking) 
         {
-            this.attacking = true;
+            this.isAttacking = true;
+            // Only need these two lines while using the weapon method of calling the anims
+            // For now use them to set the animation to be played
+            // The collider in Game.js checks to see if the player is attacking while colliding and damages the enemy accordingly
             this.action = 'attack_';
             this.weapon = 'swords_';
-            this.scene.time.addEvent({ delay: 500, callback: this.disableAttacking, callbackScope: this }); // 4 second delay between punches
+            // 1/2 second delay between attacks
+            this.scene.time.addEvent({ delay: 500, callback: this.disableAttacking, callbackScope: this }); 
         }
-        else if ((this.body.velocity.x !== 0 || this.body.velocity.y !== 0) && !this.attacking) {
+        // If not shooting or attacking set the animation to either running if moving or standing if not
+        else if ((this.body.velocity.x !== 0 || this.body.velocity.y !== 0) && !this.isAttacking) {
             this.action = 'run_';
-        } else if ((this.body.velocity.x === 0 && this.body.velocity.y === 0) && !this.attacking) {
+        } else if ((this.body.velocity.x === 0 && this.body.velocity.y === 0) && !this.isAttacking) {
             this.action = 'stand_';
         }
 
         let anim = this.animPrefix + this.weapon + this.action + this.direction;
-        
-        // if (this.anims.currentAnim.key !== anim && !this.scene.physics.world.isPaused) {
-        //     this.anims.play(anim);
-        // }
-        //console.log(anim);
+        // Animation logic to play the correct animation and revert to standing or running once the attack is finished
+        // Check the direction of attack and change the physics box offsets to account for sword swinging
         if (this.action === 'attack_') {
             if (this.direction === 'right') {
                 this.body.setOffset(75, 0);
@@ -166,12 +176,15 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 this.body.setOffset(-8, 0);
             }
             this.anims.play(anim, true);
+            // Wait 500ms(the duration of the sword swing), then call resetSwords to reset the offset and set the action and weapon to stand and unarmed
             this.scene.time.addEvent({ delay: 500, callback: this.resetSwords, callbackScope: this });
         } else if (this.action === 'shoot_') {
             this.anims.play(anim, true);
+            // Wait 200ms(the duration of the shot), then call resetShoot to set the action and weapon to stand and unarmed
             this.scene.time.addEvent({ delay: 200, callback: this.resetShoot, callbackScope: this });
         }
         else {
+            // Once delayed functions are called the non attacking animations will resume
             this.anims.play(anim, true);
         }
     }
@@ -189,8 +202,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         }
     }
     disableAttacking() {
-        if (this.attacking) {
-            this.attacking = false;
+        if (this.isAttacking) {
+            this.isAttacking = false;
         }
     }
     disableShooting() {
@@ -199,15 +212,14 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         }
     }
     resetSwords() {
-        if (!this.attacking) { //this.action === 'attack_' 
+        if (!this.isAttacking) { // Use this instead of this.action === 'attack_' so you can instantly attack again instead of the animation being cut off 1 frame in
             this.body.setOffset(0);
             this.action = 'stand_';
             this.weapon = 'unarmed_'
         }
     }
     resetShoot() {
-        if (!this.isShooting) { //this.action === 'attack_' 
-            //this.body.setOffset(0);
+        if (!this.isShooting) { // Use this instead of this.action === 'attack_' so you can instantly attack again instead of the animation being cut off 1 frame in
             this.action = 'stand_';
             this.weapon = 'unarmed_'
         }
@@ -215,13 +227,13 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
     damage(amount) 
     {
         if (!this.damaged && this.alive) {
-        //this.hurtSound.play();
-        this.scene.cameras.main.shake(4);
+        this.scene.cameras.main.shake(200, 0.01);
         this.damaged = true;
-        let health = this.scene.registry.get('health_current'); //find out the player's current health
-        this.scene.registry.set('health_current', health - amount);  //update the player's current health
-        this.scene.events.emit('healthChange'); //tell the scene the health has changed so the HUD is updated
+        let health = this.scene.registry.get('health_current'); // Find out the player's current health
+        this.scene.registry.set('health_current', health - amount);  // Update the player's current health
+        this.scene.events.emit('healthChange'); // Tell the scene the health has changed so the HealthDisplay is updated
         this.setTint(0x8e2f15);
+        // Delay for 1 second before being made vulnerable again
         this.scene.time.addEvent({ delay: 1000, callback: this.normalize, callbackScope: this });
         }
     }

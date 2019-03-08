@@ -1,7 +1,6 @@
 import phaser from 'phaser'
 import { Preloader } from './scenes/Preloader'
 import { Game } from './scenes/Game'
-import { HUD } from './scenes/HUD'
 import HealthDisplay from './scenes/HealthDisplay';
 //import { GameOver } from './scenes/GameOver'
 
@@ -14,7 +13,6 @@ const config = {
     },
     scene: [
         Preloader,
-        
         Game,
         HealthDisplay,
         //GameOver
