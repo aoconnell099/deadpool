@@ -13,23 +13,28 @@ export class Game extends Scene {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: false
+                    debug: true
                 }
             }
         })
         // Probably dont need 
-        this.deadpool = null;
-        this.background = null;
-        this.foreground = null;
+    //     this.deadpool = null;
+    //     this.background = null;
+    //     this.foreground = null;
     }
 
     create () {
         // NOTE -- Using the Scene Data Plugin we can store data on a Scene level using this.data. Might be better than using the register in certain cases
         // Background tileSprite of the city skyline and the foreground tileSprite of the highway
-        this.background = this.add.tileSprite(1600, 300, 3200, 1024, 'city').setDisplaySize(3200, 600);
-        this.foreground = this.add.tileSprite(1600, 300, 3200, 1024, 'road').setDisplaySize(3200, 600);
+        //this.background = this.add.tileSprite(1600, 300, 3200, 1024, 'city').setDisplaySize(3200, 600);
+        //this.foreground = this.add.tileSprite(1600, 300, 3200, 1024, 'road').setDisplaySize(3200, 600);
+        this.background = this.add.tileSprite((this.game.config.width * 10) / 2, this.game.config.height / 2, this.game.config.width * 10, 1024, 'city').setDisplaySize(this.game.config.width * 10, this.game.config.height);
+        this.foreground = this.add.tileSprite((this.game.config.width * 10) / 2, this.game.config.height / 2, this.game.config.width * 10, 1024, 'road').setDisplaySize(this.game.config.width * 10, this.game.config.height);
         // Set the bounds to be the upper railing and the bottom of the road
-        this.physics.world.setBounds(300, 220, 2900, 380);       
+        console.log((51/100) * this.game.config.height);
+        this.worldBoundsX = this.game.config.width * 10;
+        this.worldBoundsY = Math.floor((51/100) * this.game.config.height);
+        this.physics.world.setBounds(350, Math.floor((44/100) * this.game.config.height), (this.game.config.width * 10) - 350, this.game.config.height - Math.floor((44/100) * this.game.config.height));       
 
         // Create groups to hold a current list of enemies, enemyAttacks(bullets, etc.) , and playerAttacks(bullets)
         // Set running the child updates on them to true so that each element of the groups run their update methods
@@ -44,14 +49,14 @@ export class Game extends Scene {
         this.deadpool = new Deadpool({
             scene: this,
             x: 500,
-            y: 450,
+            y: Math.floor((44/100) * this.game.config.height) + 100,
         });
         // For now use this for loop method to add enemies to the game
         // Create 5 new slime people at a random x and y within the world bounds and add them to the enemies group
         let i;
         for (i=0; i<5; i++) {
-            let spawnX = Phaser.Math.Between(900,2000);
-            let spawnY = Phaser.Math.Between(300,750);
+            let spawnX = Phaser.Math.Between(1200, this.game.config.width * 10);
+            let spawnY = Phaser.Math.Between(Math.floor((55/100) * this.game.config.height), this.game.config.height);
             
             let slime = new Slime({
                 scene: this,
@@ -62,8 +67,8 @@ export class Game extends Scene {
         }
         // Do the same for shooters
         for (i=0; i<5; i++) {
-            let spawnX = Phaser.Math.Between(1200,2000);
-            let spawnY = Phaser.Math.Between(300,750);
+            let spawnX = Phaser.Math.Between(1200, this.game.config.width * 10);
+            let spawnY = Phaser.Math.Between(Math.floor((55/100) * this.game.config.height), this.game.config.height);
             
             let shooter = new Shooter({
                 scene: this,
@@ -80,6 +85,13 @@ export class Game extends Scene {
         
         this.cameras.main.zoom = 1.0;
         this.cameras.main.fadeIn(3000, 0, 0, 0);
+        //console.log(this.global12);
+        this.events.on('resize', this.resize, this);
+        window.addEventListener('resize', function (event) {
+            console.log('window resized window listener')
+            this.game.resize(window.innerWidth, window.innerHeight);
+        
+        }, false);
 
     }
     update (time, delta) {
@@ -117,5 +129,16 @@ export class Game extends Scene {
     {
         bullet.enemyCollide(player);
     }  
+
+    resize (width, height)
+    {
+        if (width === undefined) { width = this.sys.game.config.width; }
+        if (height === undefined) { height = this.sys.game.config.height; }
+
+        this.cameras.resize(width, height);
+
+        this.background.setSize(width, height).setDisplaySize(width * 10, height);
+        this.foreground.setSize(width, height).setDisplaySize(width * 10, height);
+    }
     
 }

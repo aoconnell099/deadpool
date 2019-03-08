@@ -5,8 +5,9 @@ import HealthDisplay from './scenes/HealthDisplay';
 //import { GameOver } from './scenes/GameOver'
 
 const config = {
-    width: 800,
-    height: 600,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    autoResize: true,
     parent: 'content',
        physics: {
         default: 'arcade'
@@ -18,4 +19,5 @@ const config = {
         //GameOver
     ]
 };
+const global12 = 10;
 const game =  new phaser.Game(config);
