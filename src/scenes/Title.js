@@ -16,6 +16,7 @@ export class Title extends Scene {
         let width = this.game.config.width;
         let height = this.game.config.height;
         let scene = this.scene;
+        let sound = this.sound;
 
         WebFont.load({
             google: {
@@ -30,6 +31,7 @@ export class Title extends Scene {
                 // var t = add.text(330, 200, 'R.I.P', { fontFamily: 'Nosifer', fontSize: 150, color: '#ff3434' });
 
                 input.keyboard.on('keydown-' + 'ENTER', function (event) { 
+                    sound.play('take_on_me');
                     scene.start('game');
                  });
             }

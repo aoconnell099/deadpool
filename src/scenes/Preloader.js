@@ -25,7 +25,6 @@ export class Preloader extends Scene {
         this.load.on('complete', function () {
             this.progress.destroy();
             this.fullBar.destroy();
-            this.sound.play('take_on_me');
         }, this);
         
         // Load the assets into the game
