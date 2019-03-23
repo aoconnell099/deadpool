@@ -25,6 +25,7 @@ export class Preloader extends Scene {
         this.load.on('complete', function () {
             this.progress.destroy();
             this.fullBar.destroy();
+            this.sound.play('take_on_me');
         }, this);
         
         // Load the assets into the game
@@ -37,12 +38,15 @@ export class Preloader extends Scene {
         this.load.atlas('deadpool', 'assets/deadpool_spritesheet.png', 'assets/deadpool_spritesTP.json');
         this.load.atlas('slime_left', 'assets/slime_spritesheet_left.png', 'assets/slime_spritesheet_left.json');
         this.load.atlas('slime_right', 'assets/slime_spritesheet_right.png', 'assets/slime_spritesheet_right.json');
+        this.load.audio('take_on_me', 'assets/take_on_me.mp3');
+        this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
     }
 
     create() {
         this.initRegistry();
         makeAnimations(this);
-        this.scene.start('game');
+        
+        this.scene.start('title');
     }
 
     initRegistry() 
