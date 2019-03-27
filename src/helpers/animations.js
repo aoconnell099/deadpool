@@ -27,12 +27,12 @@ export default function makeAnimations(scene) {
         frameRate: 20,
         repeat: -1
     });
-    scene.anims.create({
-        key: 'dp_pistol_stand_right',
-        frames: [ {key:'deadpool', frame: 'pistol_stand_right'} ],
-        frameRate: 20,
-        repeat: -1
-    });
+    // scene.anims.create({
+    //     key: 'dp_pistol_stand_right',
+    //     frames: [ {key:'deadpool', frame: 'pistol_stand_right'} ],
+    //     frameRate: 20,
+    //     repeat: -1
+    // });
 
     //running right anims
     scene.anims.create({
@@ -48,7 +48,7 @@ export default function makeAnimations(scene) {
         repeat: -1
     });
 
-    //running right anims
+    //running left anims
     scene.anims.create({
         key: 'dp_unarmed_run_left',
         frames: [ {key:'deadpool', frame: 'step_left_1/3'}, {key:'deadpool', frame: 'step_left_2'}, {key:'deadpool', frame: 'step_left_1/3'}, {key:'deadpool', frame: 'step_left_4'} ],
@@ -62,7 +62,21 @@ export default function makeAnimations(scene) {
         repeat: -1
     });
 
-    //attack anims
+    //jumping anims
+    scene.anims.create({
+        key: 'dp_unarmed_jump_left',
+        frames: [ {key:'deadpool', frame: 'jumpL1'}, {key:'deadpool', frame: 'jumpL2'}, {key:'deadpool', frame: 'jumpL3'}, {key:'deadpool', frame: 'jumpL4'} ],
+        frameRate: 5,
+        repeat: 0
+    });
+    scene.anims.create({
+        key: 'dp_unarmed_jump_right',
+        frames: [ {key:'deadpool', frame: 'jumpR1'}, {key:'deadpool', frame: 'jumpR2'}, {key:'deadpool', frame: 'jumpR3'}, {key:'deadpool', frame: 'jumpR4'} ],
+        frameRate: 5,
+        repeat: 0
+    });
+
+    //attack anims 
     scene.anims.create({
         key: 'dp_swords_attack_left',
         frames: [ {key:'deadpool', frame: 'swords_stand_left'}, {key:'deadpool', frame: 'swords_swing_left'} ],
@@ -77,9 +91,15 @@ export default function makeAnimations(scene) {
     });
     scene.anims.create({
         key: 'dp_pistol_shoot_right',
-        frames: [ {key:'deadpool', frame: 'pistol_shoot_right'} ],
-        frameRate: 20,
-        repeat: -1
+        frames: [ { key: 'deadpool', frame: 'shootR2' }, { key: 'deadpool', frame: 'shootR1' } ],
+        frameRate: 6,
+        repeat: 0
+    });
+    scene.anims.create({
+        key: 'dp_pistol_shoot_left',
+        frames: [ { key: 'deadpool', frame: 'shootL2' }, { key: 'deadpool', frame: 'shootL1' } ],
+        frameRate: 6,
+        repeat: 0
     });
     // End of Deadpool's animations
 

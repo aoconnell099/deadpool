@@ -28,16 +28,19 @@ export class Preloader extends Scene {
         }, this);
         
         // Load the assets into the game
-        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-        this.load.spritesheet('blonde', 'assets/blonde1.png', { frameWidth: 439, frameHeight: 284 });
-        this.load.spritesheet('black', 'assets/black1.png', { frameWidth: 439, frameHeight: 284 });
-        this.load.image('city', 'assets/backround.png');
-        this.load.image('road', 'assets/ground.png');
-        this.load.image('bullet', 'assets/bullet.png');
-        this.load.atlas('deadpool', 'assets/deadpool_spritesheet.png', 'assets/deadpool_spritesTP.json');
-        this.load.atlas('slime_left', 'assets/slime_spritesheet_left.png', 'assets/slime_spritesheet_left.json');
-        this.load.atlas('slime_right', 'assets/slime_spritesheet_right.png', 'assets/slime_spritesheet_right.json');
-        this.load.audio('take_on_me', 'assets/take_on_me.mp3');
+        this.load.spritesheet('blonde', 'assets/chars/shooters/blonde1.png', { frameWidth: 439, frameHeight: 284 });
+        this.load.spritesheet('black', 'assets/chars/shooters/black1.png', { frameWidth: 439, frameHeight: 284 });
+        //this.load.spritesheet('deadpool_shooting', 'assets/deadpoolshooting4.png', { frameWidth: 197, frameHeight: 150 });
+        this.load.image('city', 'assets/levels/backround.png');
+        this.load.image('road', 'assets/levels/ground.png');
+        this.load.image('bullet', 'assets/items/bullet.png');
+        //this.load.atlas('deadpool', 'assets/chars/deadpool/deadpool_spritesheet.png', 'assets/chars/deadpool/deadpool_spritesTP.json');
+        //this.load.atlas('deadpool_shooting', 'assets/deadpoolshooting3.png', 'assets/deadpool_shooting.json');
+        this.load.atlas('deadpool', 'assets/chars/deadpool/deadpool.png', 'assets/chars/deadpool/deadpool.json');
+        this.load.atlas('deadpoolGunner', 'assets/chars/deadpool/deadpool_guns.png', 'assets/chars/deadpool/deadpool_guns.json');
+        this.load.atlas('slime_left', 'assets/chars/slime/slime_spritesheet_left.png', 'assets/chars/slime/slime_spritesheet_left.json');
+        this.load.atlas('slime_right', 'assets/chars/slime/slime_spritesheet_right.png', 'assets/chars/slime/slime_spritesheet_right.json');
+        this.load.audio('take_on_me', 'assets/music/take_on_me.mp3');
         this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
     }
 
