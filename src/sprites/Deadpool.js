@@ -183,11 +183,36 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         }
 
         let anim = this.animPrefix + this.weapon + this.action + this.direction;
-        console.log(anim);
+    
         // Animation logic to play the correct animation and revert to standing or running once the attack is finished
         // Check the direction of attack and change the physics box offsets to account for sword swinging
         if (this.action === 'jump_') {
-            this.anims.play(anim, true);
+            const targetY = this.y - 30;
+            let anims = this.anims;
+            //this.anims.play(anim, true);
+            // this.scene.tweens.add({
+            //     targets: this,
+            //     x: this.x,
+            //     y: targetY,
+            //     ease: 'Linear',
+            //     duration: 400,
+            //     yoyo: true,
+                // onStart: function (tween, targets) {
+                //     anims.play(anim, true);
+                // },
+                // onComplete: function (tween, targets) {
+                //     bullet.destroy();
+                // }
+            // });
+            this.scene.tweens.add({
+                targets: this,
+                x: 700,
+                duration: 3000,
+                ease: 'Power2',
+                yoyo: true,
+                delay: 1000
+            });
+            //this.anims.play(anim, true);
             // Wait 500ms(the duration of the sword swing), then call resetSwords to reset the offset and set the action and weapon to stand and unarmed
             this.scene.time.addEvent({ delay: 800, callback: this.resetJump, callbackScope: this });
         }
