@@ -17,6 +17,10 @@ export default class HealthDisplay extends Phaser.Scene {
         // Watch the level to see if the health has changed. Event emitted by Deadpool class.
         level.events.on('healthChange', this.updateHealth, this); 
         // level.events.on('gameOver', this.gameOver, this); // Watch for Game Over // DONT NEED YET
+
+        // Debug info
+        // this.xPos = this.add.text(1, 5, 'Health: 100 / 100').setScrollFactor(0);
+        // this.yPos = this.add.text(1, 10, 'Health: 100 / 100').setScrollFactor(0);
         
     }
     updateHealth() 

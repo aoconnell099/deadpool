@@ -13,7 +13,7 @@ export class Game extends Scene {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: false
+                    debug: true
                 }
             }
         })
@@ -44,6 +44,8 @@ export class Game extends Scene {
         this.enemyAttack.runChildUpdate = true;
         this.playerAttack = this.add.group();
         this.playerAttack.runChildUpdate = true;
+
+        
 
         // Add deadpool to the game
         this.deadpool = new Deadpool({

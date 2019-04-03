@@ -187,9 +187,13 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         // Animation logic to play the correct animation and revert to standing or running once the attack is finished
         // Check the direction of attack and change the physics box offsets to account for sword swinging
         if (this.action === 'jump_') {
-            const targetY = this.y - 30;
+            let targetY = this.y - 30;
             let anims = this.anims;
-            //this.anims.play(anim, true);
+
+            //this.scene.physics.moveTo(this, this.x, this.y-50, 60, 400);
+            this.anims.play(anim, true);
+            //this.scene.physics.moveTo(this, this.x, this.y+50, 60, 400);
+            
             // this.scene.tweens.add({
             //     targets: this,
             //     x: this.x,
@@ -204,15 +208,27 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 //     bullet.destroy();
                 // }
             // });
-            this.scene.tweens.add({
-                targets: this,
-                x: 700,
-                duration: 3000,
-                ease: 'Power2',
-                yoyo: true,
-                delay: 1000
-            });
+            // this.scene.tweens.add({
+            //     targets: this,
+            //     y: '-=50',
+            //     duration: 400,
+            //     ease: 'Power2',
+            //     yoyo: true,
+            //     // delay: 1000
+            // });
+            // this.scene.tweens.add({
+            //     targets: this,
+            //     x: this.x-500,
+            //     duration: 2000,
+            //     ease: 'Power2',
+                
+            // });
+            
             //this.anims.play(anim, true);
+            
+            //this.setY(targetY);
+            //this.setY(this.y+50);
+            // this.y+=50;
             // Wait 500ms(the duration of the sword swing), then call resetSwords to reset the offset and set the action and weapon to stand and unarmed
             this.scene.time.addEvent({ delay: 800, callback: this.resetJump, callbackScope: this });
         }
