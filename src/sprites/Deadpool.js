@@ -19,7 +19,13 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         this.canMove = true;
         this.canHeal = true;
         this.isAttacking = false;
-        this.isShooting = false;
+        //this.isShooting = false;
+        this.pistol = false;
+        this.shotgun = false;
+        this.ak = false;
+        this.sniper = false;
+        this.minigun = false;
+        this.grenade = false;
         this.isJumping = false;
         // Movement elements
         this.action = 'stand_';
@@ -30,9 +36,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         // NOTE -- Dont need but leaving in for now in case game design changes to hold more than one weapon
         this.weapon = 'unarmed_';
         this.weaponIndex = 0;
-        this.weapons = [];
-        this.weapons.push(this.weapon);
-        this.weapons.push('swords_');
+        this.weapons = [ 'unarmed_', 'swords_', 'pistol_', 'shotgun_', 'sniper_', 'ak_', 'mg_', 'gren_' ];
 
         // Add the control keys for deadpool
         this.keys = {
@@ -44,7 +48,12 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             up: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
             left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
             right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-            down: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
+            down: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
+            shotgun: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
+            ak: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+            sniper: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E),
+            minigun: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R),
+            grenade: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T),
         };
         this.scene.add.existing(this);     
     }
@@ -60,8 +69,15 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             jump: this.keys.jump.isDown,
             switchGun: this.keys.switchGun,
             fire: this.keys.fire.isDown,
-            melee: this.keys.melee.isDown
+            melee: this.keys.melee.isDown,
+            shotgun: this.keys.shotgun.isDown,
+            ak: this.keys.ak.isDown,
+            sniper: this.keys.sniper.isDown,
+            minigun: this.keys.minigun.isDown,
+            grenade: this.keys.grenade.isDown
         };
+        let isShooting = (this.pistol || this.shotgun || this.ak || this.sniper || this.minigun || this.grenade);
+        //console.log(isShooting);
         if (this.canHeal) {
             this.canHeal = false;
             this.scene.time.addEvent({ delay: 1000, callback: this.enableHeal, callbackScope: this }); // 1 second delay between heal
@@ -144,27 +160,51 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         }
 
         // First check to see if deadpool is shooting
-        else if (input.fire && !this.isShooting && !this.isJumping) {
-            this.isShooting = true;
-            this.canMove = false;
-            // Only need these two lines while using the weapon method of calling the anims
-            this.action = 'shoot_';
-            this.weapon = 'pistol_';
-            // Add the bullet to the game and player Attack group
-            let bullet = new Bullet({
-                scene: this.scene,
-                x: this.x + 32, 
-                y: this.y - 17,
-                damage: this.shootingAttack,
-                dir: this.direction
-              });
-            this.scene.playerAttack.add(bullet);
-            // 1/5 second delay between shots
-            this.scene.time.addEvent({ delay: 300, callback: this.enableMove, callbackScope: this });
-            this.scene.time.addEvent({ delay: 300, callback: this.disableShooting, callbackScope: this });
+        else if ((input.fire || input.shotgun || input.sniper || input.ak || input.minigun || input.grenade) 
+                && !(isShooting)     //(this.pistol.isShooting && this.shotgun.isShooting && this.ak.isShooting && this.sniper.isShooting && this.minigun.isShooting && this.grenade.isShooting) 
+                && !this.isJumping) {
+            if (input.fire) {
+                this.scene.time.addEvent({ callback: this.pistolShoot, callbackScope: this, args: ['pistol'] });
+                //this.scene.time.addEvent({ delay: 300, callback: this.resetShoot, callbackScope: this, args: ['pistol'] });
+            }
+            else if (input.shotgun) {
+                this.scene.time.addEvent({ callback: this.shotgunShoot, callbackScope: this, args: ['shotgun'] });
+                //this.scene.time.addEvent({ delay: 1000, callback: this.resetShoot, callbackScope: this, args: ['shotgun'] });
+            }
+            else if (input.ak) {
+                this.scene.time.addEvent({ callback: this.akShoot, callbackScope: this, args: ['ak'] });
+            }
+            else if (input.sniper) {
+                this.scene.time.addEvent({ callback: this.sniperShoot, callbackScope: this, args: ['sniper'] });
+            }
+            else if (input.minigun) {
+                this.scene.time.addEvent({ callback: this.minigunShoot, callbackScope: this, args: ['minigun'] });
+            }
+            else if (input.grenade) {
+                this.scene.time.addEvent({ callback: this.grenadeShoot, callbackScope: this, args: ['grenade'] });
+            }
+            // this.isShooting = true;
+            // this.canMove = false; 
+            // // Only need these two lines while using the weapon method of calling the anims
+            // this.action = 'shoot_';
+            // this.weapon = 'pistol_';
+            
+            // let bulletPos = (this.direction === 'right') ? this.x + 42 : this.x - 42;
+            // // Add the bullet to the game and player Attack group
+            // let bullet = new Bullet({
+            //     scene: this.scene,
+            //     x: bulletPos, 
+            //     y: this.y - 17,
+            //     damage: this.shootingAttack,
+            //     dir: this.direction
+            //   });
+            // this.scene.playerAttack.add(bullet);
+            // // 1/5 second delay between shots
+            // this.scene.time.addEvent({ delay: 300, callback: this.enableMove, callbackScope: this });
+            // this.scene.time.addEvent({ delay: 300, callback: this.disableShooting, callbackScope: this });
         } 
         // Next check for melee attack
-        else if (input.melee && !this.isAttacking && !this.isShooting && !this.isJumping)  
+        else if (input.melee && !this.isAttacking && !isShooting && !this.isJumping)  
         {
             this.isAttacking = true;
             // Only need these two lines while using the weapon method of calling the anims
@@ -176,9 +216,9 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             this.scene.time.addEvent({ delay: 500, callback: this.disableAttacking, callbackScope: this }); 
         }
         // If not shooting or attacking set the animation to either running if moving or standing if not
-        else if ((this.body.velocity.x !== 0 || this.body.velocity.y !== 0) && !this.isAttacking && !this.isShooting && !this.isJumping) {
+        else if ((this.body.velocity.x !== 0 || this.body.velocity.y !== 0) && !this.isAttacking && !isShooting && !this.isJumping) {
             this.action = 'run_';
-        } else if ((this.body.velocity.x === 0 && this.body.velocity.y === 0) && !this.isAttacking && !this.isShooting && !this.isJumping) {
+        } else if ((this.body.velocity.x === 0 && this.body.velocity.y === 0) && !this.isAttacking && !isShooting && !this.isJumping) {
             this.action = 'stand_';
         }
 
@@ -191,23 +231,53 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             let anims = this.anims;
 
             //this.scene.physics.moveTo(this, this.x, this.y-50, 60, 400);
-            this.anims.play(anim, true);
+            //this.anims.play(anim, true);
             //this.scene.physics.moveTo(this, this.x, this.y+50, 60, 400);
             
-            // this.scene.tweens.add({
+            // var tween = this.scene.tweens.add({
             //     targets: this,
-            //     x: this.x,
-            //     y: targetY,
+            //     duration: 800,
+            //     yoyo: false,
+            //     repeat: 0,
             //     ease: 'Linear',
-            //     duration: 400,
-            //     yoyo: true,
-                // onStart: function (tween, targets) {
-                //     anims.play(anim, true);
-                // },
-                // onComplete: function (tween, targets) {
-                //     bullet.destroy();
-                // }
+                
+            //     y: {
+        
+            //         getEnd: function (target, key, value)
+            //         {
+            //             //value += 30;
+            //             console.log(targetY);
+            //             //console.log(value);
+            //             //console.log(key);
+            //             return value + 30;
+            //         },
+        
+            //         getStart: function (target, key, value)
+            //         {
+            //             anims.play(anim, true);
+            //             console.log(targetY);
+            //             //console.log(value);
+            //             //console.log(key);
+            //             return value - 30;
+            //         }
+        
+            //     }
+        
             // });
+
+            this.scene.tweens.add({
+                targets: this,
+                x: this.x,
+                y: targetY,
+                ease: 'Linear',
+                duration: 400,
+                yoyo: true,
+                onStart: function (tween, targets) {
+                    anims.play(anim, true);
+                    targetY-=20;
+                },
+                
+            });
             // this.scene.tweens.add({
             //     targets: this,
             //     y: '-=50',
@@ -235,7 +305,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         
         else if (this.action === 'attack_') {
             if (this.direction === 'right') {
-                this.body.setOffset(75, 0);
+                this.body.setOffset(175, 0);
             }
             else if (this.direction === 'left') {
                 this.body.setOffset(-8, 0);
@@ -248,6 +318,22 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             this.body.setVelocity(0);
             // Wait 200ms(the duration of the shot), then call resetShoot to set the action and weapon to stand and unarmed
             this.scene.time.addEvent({ delay: 300, callback: this.resetShoot, callbackScope: this });
+            // switch (this.weapon) {
+            //     case 'pistol_':
+            //         this.scene.time.addEvent({ delay: 300, callback: this.resetShoot, callbackScope: this });
+            //     case 'shotgun_':
+            //         this.scene.time.addEvent({ delay: 1000, callback: this.resetShoot, callbackScope: this });
+            //     case 'ak_':
+            //         this.ak = false;
+            //     case 'minigun_':
+            //         this.minigun = false;
+            //     case 'sniper':
+            //         this.sniper = false
+            //     case 'grenade':
+            //         this.grenade = false
+            //     default:
+            //         this.pistol = false;
+            // }
         }
         else {
             // Once delayed functions are called the non attacking animations will resume
@@ -277,9 +363,23 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             this.isAttacking = false;
         }
     }
-    disableShooting() {
-        if (this.isShooting) {
-            this.isShooting = false;
+    disableShooting(gun) {
+        console.log(gun);
+        switch (gun) {
+            case 'pistol':
+                this.pistol = false;
+            case 'shotgun':
+                this.shotgun = false;
+            case 'ak':
+                this.ak = false;
+            case 'minigun':
+                this.minigun = false;
+            case 'sniper':
+                this.sniper = false
+            case 'grenade':
+                this.grenade = false
+            default:
+                this.pistol = false;
         }
     }
     disableJumping() {
@@ -295,16 +395,147 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         }
     }
     resetShoot() {
-        if (!this.isShooting) { // Use this instead of this.action === 'attack_' so you can instantly attack again instead of the animation being cut off 1 frame in
-            this.action = 'stand_';
-            this.weapon = 'unarmed_'
+        if (!(this.pistol || this.shotgun || this.ak || this.sniper || this.minigun || this.grenade)) { // Use this instead of this.action === 'attack_' so you can instantly attack again instead of the animation being cut off 1 frame in
+        this.action = 'stand_';
+        this.weapon = 'unarmed_';
         }
     }
     resetJump() {
         if (!this.isJumping) { // Use this instead of this.action === 'attack_' so you can instantly attack again instead of the animation being cut off 1 frame in
             this.action = 'stand_';
-            this.weapon = 'unarmed_'
+            this.weapon = 'unarmed_';
         }
+    }
+    pistolShoot() {
+        this.pistol = true;
+        this.canMove = false;
+        // Only need these two lines while using the weapon method of calling the anims
+        this.action = 'shoot_';
+        this.weapon = 'pistol_';
+        
+        let bulletPos = (this.direction === 'right') ? this.x + 42 : this.x - 42;
+        let bulletAngle = (this.direction === 'right') ? 0 : 180;
+        // Add the bullet to the game and player Attack group
+        let bullet = new Bullet({
+            scene: this.scene,
+            x: bulletPos, 
+            y: this.y - 17,
+            angle: 0,
+            damage: this.shootingAttack,
+            dir: this.direction,
+            speed: 500
+            });
+        this.scene.playerAttack.add(bullet);
+        // 1/5 second delay between shots
+        this.scene.time.addEvent({ delay: 300, callback: this.enableMove, callbackScope: this });
+        this.scene.time.addEvent({ delay: 300, callback: this.disableShooting, callbackScope: this, args: ['pistol'] });
+    }
+    shotgunShoot() {
+        this.shotgun = true;
+        this.canMove = false;
+        // Only need these two lines while using the weapon method of calling the anims
+        this.action = 'shoot_';
+        this.weapon = 'shotgun_';
+        
+        let bulletPos = (this.direction === 'right') ? this.x + 42 : this.x - 42;
+        // Add the bullet to the game and player Attack group
+        let i;
+        for (i=0; i<8; i++) {
+            let bulletAngle = (this.direction === 'right') ? Phaser.Math.Between(-10, 10) : Phaser.Math.Between(-10, 10) + 180;
+            //console.log(bulletAngle);
+            let bullet = new Bullet({
+                scene: this.scene,
+                x: bulletPos, 
+                y: this.y-5,
+                angle:  bulletAngle,
+                damage: this.shootingAttack,
+                dir: this.direction,
+                speed: 500
+                });
+            this.scene.playerAttack.add(bullet);
+        }
+        
+        // 1/5 second delay between shots
+        this.scene.time.addEvent({ delay: 300, callback: this.enableMove, callbackScope: this });
+        this.scene.time.addEvent({ delay: 600, callback: this.disableShooting, callbackScope: this, args: ['shotgun'] });
+    }
+    akShoot() {
+        this.ak = true;
+        this.canMove = false;
+        // Only need these two lines while using the weapon method of calling the anims
+        this.action = 'shoot_';
+        this.weapon = 'ak_';
+        
+        let bulletPos = (this.direction === 'right') ? this.x + 42 : this.x - 42;
+        // Add the bullet to the game and player Attack group
+        let bulletAngle = (this.direction === 'right') ? Phaser.Math.Between(-3, 3) : Phaser.Math.Between(-3, 3) + 180;
+        //console.log(bulletAngle);
+        let bullet = new Bullet({
+            scene: this.scene,
+            x: bulletPos, 
+            y: this.y-3,
+            angle:  bulletAngle,
+            damage: this.shootingAttack,
+            dir: this.direction,
+            speed: 650
+            });
+        this.scene.playerAttack.add(bullet);
+        
+        // 1/5 second delay between shots
+        this.scene.time.addEvent({ delay: 300, callback: this.enableMove, callbackScope: this });
+        this.scene.time.addEvent({ delay: 150, callback: this.disableShooting, callbackScope: this, args: ['ak'] });
+    }
+    sniperShoot() {
+        this.sniper = true;
+        this.canMove = false;
+        // Only need these two lines while using the weapon method of calling the anims
+        this.action = 'shoot_';
+        this.weapon = 'sniper_';
+        
+        let bulletPos = (this.direction === 'right') ? this.x + 42 : this.x - 42;
+        // Add the bullet to the game and player Attack group
+        let bulletAngle = (this.direction === 'right') ? 0 : 180;
+        //console.log(bulletAngle);
+        let bullet = new Bullet({
+            scene: this.scene,
+            x: bulletPos, 
+            y: this.y-7,
+            angle:  bulletAngle,
+            damage: this.shootingAttack,
+            dir: this.direction,
+            speed: 900
+            });
+        this.scene.playerAttack.add(bullet);
+        
+        // 1/5 second delay between shots
+        this.scene.time.addEvent({ delay: 300, callback: this.enableMove, callbackScope: this });
+        this.scene.time.addEvent({ delay: 850, callback: this.disableShooting, callbackScope: this, args: ['sniper'] });
+    }
+    minigunShoot() {
+        this.minigun = true;
+        this.canMove = false;
+        // Only need these two lines while using the weapon method of calling the anims
+        this.action = 'shoot_';
+        this.weapon = 'mg_';
+        
+        let bulletPos = (this.direction === 'right') ? this.x + 42 : this.x - 42;
+        // Add the bullet to the game and player Attack group
+        let bulletAngle = (this.direction === 'right') ? Phaser.Math.Between(-3, 3) : Phaser.Math.Between(-3, 3) + 180;
+        //console.log(bulletAngle);
+        let bullet = new Bullet({
+            scene: this.scene,
+            x: bulletPos, 
+            y: this.y+12,
+            angle:  bulletAngle,
+            damage: this.shootingAttack,
+            dir: this.direction,
+            speed: 800
+            });
+        this.scene.playerAttack.add(bullet);
+        
+        // 1/5 second delay between shots
+        this.scene.time.addEvent({ delay: 300, callback: this.enableMove, callbackScope: this });
+        this.scene.time.addEvent({ delay: 50, callback: this.disableShooting, callbackScope: this, args: ['minigun'] });
     }
     damage(amount) 
     {
@@ -319,11 +550,12 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         this.scene.time.addEvent({ delay: 1000, callback: this.normalize, callbackScope: this });
         }
     }
-  normalize() 
-  {
-    if (this.alive) {
-      this.damaged = false;
-      this.setTint(0xffffff);
+    normalize() 
+    {
+        if (this.alive) {
+        this.damaged = false;
+        this.setTint(0xffffff);
+        }
     }
-  }
+
 }
