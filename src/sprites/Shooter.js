@@ -36,6 +36,9 @@ export default class Shooter extends Enemy {
       speed = this.walk;
     }
     if(this.canMove) {
+    //   console.log(this.moveX);
+    // console.log(this.moveY);
+    // console.log(this.direction);
         if (this.moveX === 'none' || this.distanceToPlayerX <= this.stoppingDistance) {
         this.body.setVelocityX(0);
         } else if (this.moveX === 'left') {
@@ -59,6 +62,7 @@ export default class Shooter extends Enemy {
         this.canFire = false;
         this.scene.time.addEvent({ delay: 1000, callback: this.enableFiring, callbackScope: this });
         this.fire();
+        //console.log(this.direction);
         
     }
 

@@ -7,6 +7,7 @@ export default class Bullet extends Phaser.GameObjects.Sprite {
         this.dir = config.dir;
         this.speed = config.speed;
         this.angle = config.angle;
+        this.gunType = config.gunType
         this.setAngle(config.angle);
         this.setPosition(config.x, config.y);
         this.setScale(config.scale);
@@ -54,7 +55,52 @@ export default class Bullet extends Phaser.GameObjects.Sprite {
     {
         // this.emitter.explode( 32, this.x, this.y );
         // this.enemySound.play();
-        enemy.damage(this.damage);
+        // enemy.damage(this.damage);
+        // this.destroy();
+        //console.log(this.gunType);
+        // switch (this.gunType) {
+        //     case 'pistol':{
+        //         enemy.damage(this.damage, 500);
+        //         this.destroy();
+        //         console.log('switch gun type');}
+        //     case 'shotgun':
+        //         enemy.damage(this.damage, 500);
+        //         this.destroy();
+        //     case 'ak':
+        //         enemy.damage(this.damage, 250);
+        //         this.destroy();
+        //     case 'minigun':
+        //         enemy.damage(this.damage, 100);
+        //         this.destroy();
+        //     case 'sniper':
+        //         enemy.damage(this.damage, 650);
+        //         this.destroy();
+        //     case 'grenade':
+        //         enemy.damage(this.damage, 500);
+        //         this.destroy();
+        //     default:
+        //         enemy.damage(this.damage, 500);
+        //         this.destroy();
+        // }
+        if (this.gunType === 'pistol') {
+            enemy.damage(this.damage, 500);
+        }
+        else if (this.gunType === 'shotgun') {
+            enemy.damage(this.damage, 500);
+        }
+        else if (this.gunType === 'ak') {
+            enemy.damage(this.damage, 250);
+        }
+        else if (this.gunType === 'sniper') {
+            enemy.damage(this.damage, 650);
+        }
+        else if (this.gunType === 'mg') {
+            enemy.damage(this.damage, 150);
+        }
+        else {
+            enemy.damage(this.damage, 500);
+        }
+
         this.destroy();
     }
 }

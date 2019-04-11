@@ -376,7 +376,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         }
     }
     disableShooting(gun) {
-        console.log(gun);
+        //console.log(gun);
         switch (gun) {
             case 'pistol':
                 this.pistol = false;
@@ -433,11 +433,12 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             scene: this.scene,
             x: bulletPos, 
             y: this.y - 17,
-            angle: 0,
-            damage: this.shootingAttack,
+            angle: bulletAngle,
+            damage: 5,
             dir: this.direction,
             speed: 500,
-            scale: 1
+            scale: 1,
+            gunType: 'pistol'
             });
         this.scene.playerAttack.add(bullet);
         // 1/5 second delay between shots
@@ -462,10 +463,11 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 x: bulletPos, 
                 y: this.y-5,
                 angle:  bulletAngle,
-                damage: this.shootingAttack,
+                damage: 5,
                 dir: this.direction,
                 speed: 500,
-                scale: 1
+                scale: 1,
+                gunType: 'shotgun'
                 });
             this.scene.playerAttack.add(bullet);
         }
@@ -490,10 +492,11 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             x: bulletPos, 
             y: this.y-3,
             angle:  bulletAngle,
-            damage: this.shootingAttack,
+            damage: 4,
             dir: this.direction,
             speed: 650,
-            scale: 1
+            scale: 1,
+            gunType: 'ak'
             });
         this.scene.playerAttack.add(bullet);
         
@@ -531,10 +534,11 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             x: bulletPos, 
             y: this.y-7,
             angle:  bulletAngle,
-            damage: this.shootingAttack,
+            damage: 15,
             dir: this.direction,
             speed: 1500,
-            scale: 2
+            scale: 2,
+            gunType: 'sniper'
             });
         emitter.startFollow(bullet);
         this.scene.playerAttack.add(bullet);
@@ -559,10 +563,11 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             x: bulletPos, 
             y: this.y+12,
             angle:  bulletAngle,
-            damage: this.shootingAttack,
+            damage: 2,
             dir: this.direction,
             speed: 800,
-            scale: 1
+            scale: 1,
+            gunType: 'mg'
             });
         this.scene.playerAttack.add(bullet);
         
@@ -579,6 +584,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         this.scene.registry.set('health_current', health - amount);  // Update the player's current health
         this.scene.events.emit('healthChange'); // Tell the scene the health has changed so the HealthDisplay is updated
         this.setTint(0x8e2f15);
+        this.scene.physics.world.colliders.remove(this.scene.bulletDeadpoolCollider); 
         // Delay for 1 second before being made vulnerable again
         this.scene.time.addEvent({ delay: 1000, callback: this.normalize, callbackScope: this });
         }
@@ -586,8 +592,9 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
     normalize() 
     {
         if (this.alive) {
-        this.damaged = false;
-        this.setTint(0xffffff);
+            this.damaged = false;
+            this.setTint(0xffffff);
+            this.scene.physics.world.colliders.add(this.scene.bulletDeadpoolCollider);
         }
     }
 

@@ -80,9 +80,9 @@ export class Game extends Scene {
             this.enemies.add(shooter);
         }
         // Add the colliders 
-        this.physics.add.collider(this.deadpool, this.enemies, this.playerEnemy);
-        this.physics.add.collider(this.playerAttack, this.enemies, this.bulletEnemy);
-        this.physics.add.collider(this.deadpool, this.enemyAttack, this.bulletPlayer);
+        this.deadpoolEnemyCollider = this.physics.add.collider(this.deadpool, this.enemies, this.playerEnemy);
+        this.bulletEnemyCollider = this.physics.add.collider(this.playerAttack, this.enemies, this.bulletEnemy);
+        this.bulletDeadpoolCollider = this.physics.add.collider(this.deadpool, this.enemyAttack, this.bulletPlayer);
 
         
         this.cameras.main.zoom = 1.0;
@@ -110,7 +110,7 @@ export class Game extends Scene {
     playerEnemy(player, enemy)
     {   // Enemy.damage() takes care of checking if the enemy is currently in a damaged state
         if (player.alive && player.isAttacking){
-          enemy.damage(player.meleeAttack);
+          enemy.damage(player.meleeAttack, 500);
         }
         else {
             // Stops the enemy from sliding across the level when you run into them
@@ -120,6 +120,7 @@ export class Game extends Scene {
 
     bulletEnemy(bullet, enemy)
     {
+        //this.physics.world.removeCollider(bulletEnemyCollider);
         // Stops the enemy from sliding from impact of bullet
         enemy.body.setVelocity(0);
         // All enemyCollide does is call enemy.damage(same as above) which damages the enemy for the amount of bullet damage and destroys the bullet

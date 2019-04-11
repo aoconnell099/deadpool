@@ -118,8 +118,10 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
   {
     if (this.x > this.scene.deadpool.x) {
       this.moveX = 'left';
+      this.direction = 'left';
     } else if (this.x < this.scene.deadpool.x) {
       this.moveX = 'right';
+      this.direction = 'right';
     } else {
       this.moveX = 'none';
     }
@@ -142,13 +144,14 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     } else {
       speed = this.walk;
     }
+    
     if (this.moveX === 'none' || this.distanceToPlayerX <= this.stoppingDistance+10) {
       this.body.setVelocityX(0);
     } else if (this.moveX === 'left') {
-      this.direction = 'left';
+      //this.direction = 'left';
       this.body.setVelocityX(-speed);
     } else if (this.moveX === 'right') {
-      this.direction = 'right';
+      //this.direction = 'right';
       this.body.setVelocityX(speed);
     }
 
@@ -176,16 +179,21 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     this.canDecide = true;
   }
 
-  damage(amount) 
+  damage(amount, time) 
   {
+    //console.log(this.scene.worldBoundsX);
+    //console.log(this.scene.physics.world.colliders);
+    //let collider = this.scene.physics.world.colliders._active[1];
     if (!this.damaged) {
       this.health -= amount;
+      //console.log(this.health);
       this.hp.decrease(amount);
       this.setTint(0x8e2f15);
-      //this.scene.physics.world.disable(this);
+      this.scene.physics.world.colliders.remove(this.scene.bulletEnemyCollider);
+      //this.scene.physics.world.colliders.remove(this.scene.deadpoolEnemyCollider); 
       this.knockback(amount);
       this.damaged = true;
-      this.scene.time.addEvent({ delay: 600, callback: this.normalize, callbackScope: this });
+      this.scene.time.addEvent({ delay: time, callback: this.normalize, callbackScope: this });
     }
     else {
       if (this.health > 0) {
@@ -207,17 +215,25 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
       }
     }
   }
-
+  
   stopMoving()
   {
     this.body.setVelocity(0);
   }
 
-  normalize() 
+  normalize() //enemyType
   {
-    this.damaged = false;
-    //this.scene.physics.world.enable(this);
-    this.setTint(0xffffff);
+    this.scene.physics.world.colliders.add(this.scene.bulletEnemyCollider);
+    if (this.alive) {
+      //console.log(this.game);
+      this.damaged = false;
+      // if (enemyType === 'enemy') { leave in for now if needed for different types of enemies
+      //   this.scene.physics.world.colliders.add(this.scene.bulletEnemyCollider);
+      // }
+      //this.scene.physics.world.colliders.add(this.scene.bulletEnemyCollider);
+      //this.scene.physics.world.colliders.add(this.scene.deadpoolEnemyCollider); 
+      this.setTint(0xffffff);
+    }
   }
 
   die()
@@ -232,9 +248,8 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
     {
       let targetX = this.scene.deadpool.x - this.x;
       let targetY = this.scene.deadpool.y - this.y;
-      let bulletAngle = (this.direction === 'right') ? Phaser.Math.RadToDeg(Math.atan(targetY/targetX)) : Phaser.Math.RadToDeg(Math.atan(targetY/targetX))+ + 180;
-      //console.log(bulletAngle)
-
+      let bulletAngle = (this.direction === 'right') ? Phaser.Math.RadToDeg(Math.atan(targetY/targetX)) : Phaser.Math.RadToDeg(Math.atan(targetY/targetX)) + 180;
+      //console.log(this.direction);
       let bullet = new Bullet({
         scene: this.scene,
         x: this.x, 
@@ -246,9 +261,6 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         scale: 1
       });
       this.scene.enemyAttack.add(bullet);
-
-      
-
       // this.scene.tweens.add({
       //     targets: bullet,
       //     x: targetX,
