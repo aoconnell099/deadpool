@@ -436,7 +436,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             angle: 0,
             damage: this.shootingAttack,
             dir: this.direction,
-            speed: 500
+            speed: 500,
+            scale: 1
             });
         this.scene.playerAttack.add(bullet);
         // 1/5 second delay between shots
@@ -463,7 +464,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 angle:  bulletAngle,
                 damage: this.shootingAttack,
                 dir: this.direction,
-                speed: 500
+                speed: 500,
+                scale: 1
                 });
             this.scene.playerAttack.add(bullet);
         }
@@ -490,7 +492,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             angle:  bulletAngle,
             damage: this.shootingAttack,
             dir: this.direction,
-            speed: 650
+            speed: 650,
+            scale: 1
             });
         this.scene.playerAttack.add(bullet);
         
@@ -504,6 +507,20 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         // Only need these two lines while using the weapon method of calling the anims
         this.action = 'shoot_';
         this.weapon = 'sniper_';
+
+        let particles =  this.scene.add.particles('explosion');
+
+        let emitter = particles.createEmitter({
+            frame: 'smoke-puff',
+            //angle: { min: 240, max: 300 },
+            speed: 1,
+            quantity: 1,
+            lifespan: 500,
+            alpha: { start: 1, end: 0 },
+            scale: { start: 0.1, end: 0 },
+            //on: false,
+            blendMode: 'ADD'
+        });
         
         let bulletPos = (this.direction === 'right') ? this.x + 42 : this.x - 42;
         // Add the bullet to the game and player Attack group
@@ -516,8 +533,10 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             angle:  bulletAngle,
             damage: this.shootingAttack,
             dir: this.direction,
-            speed: 900
+            speed: 1500,
+            scale: 2
             });
+        emitter.startFollow(bullet);
         this.scene.playerAttack.add(bullet);
         
         // 1/5 second delay between shots
@@ -542,7 +561,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             angle:  bulletAngle,
             damage: this.shootingAttack,
             dir: this.direction,
-            speed: 800
+            speed: 800,
+            scale: 1
             });
         this.scene.playerAttack.add(bullet);
         

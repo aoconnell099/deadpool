@@ -242,7 +242,8 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
         angle: bulletAngle,
         damage: Phaser.Math.Between(2, 8),
         dir: this.direction,
-        speed: 500
+        speed: 500,
+        scale: 1
       });
       this.scene.enemyAttack.add(bullet);
 

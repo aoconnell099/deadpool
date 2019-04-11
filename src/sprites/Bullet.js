@@ -9,6 +9,7 @@ export default class Bullet extends Phaser.GameObjects.Sprite {
         this.angle = config.angle;
         this.setAngle(config.angle);
         this.setPosition(config.x, config.y);
+        this.setScale(config.scale);
         this.scene.add.existing(this);
     }
 

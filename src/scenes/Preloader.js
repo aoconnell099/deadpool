@@ -40,6 +40,7 @@ export class Preloader extends Scene {
         this.load.atlas('deadpoolGunner', 'assets/chars/deadpool/deadpool_guns.png', 'assets/chars/deadpool/deadpool_guns.json');
         this.load.atlas('slime_left', 'assets/chars/slime/slime_spritesheet_left.png', 'assets/chars/slime/slime_spritesheet_left.json');
         this.load.atlas('slime_right', 'assets/chars/slime/slime_spritesheet_right.png', 'assets/chars/slime/slime_spritesheet_right.json');
+        this.load.atlas('explosion', 'assets/items/explosions.png', 'assets/items/explosions.json');
         this.load.audio('take_on_me', 'assets/music/take_on_me.mp3');
         this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
     }
