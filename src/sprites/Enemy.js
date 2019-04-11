@@ -182,6 +182,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
       this.health -= amount;
       this.hp.decrease(amount);
       this.setTint(0x8e2f15);
+      //this.scene.physics.world.disable(this);
       this.knockback(amount);
       this.damaged = true;
       this.scene.time.addEvent({ delay: 600, callback: this.normalize, callbackScope: this });
@@ -215,6 +216,7 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
   normalize() 
   {
     this.damaged = false;
+    //this.scene.physics.world.enable(this);
     this.setTint(0xffffff);
   }
 
@@ -228,28 +230,34 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
   {
     if (this.alive)
     {
+      let targetX = this.scene.deadpool.x - this.x;
+      let targetY = this.scene.deadpool.y - this.y;
+      let bulletAngle = (this.direction === 'right') ? Phaser.Math.RadToDeg(Math.atan(targetY/targetX)) : Phaser.Math.RadToDeg(Math.atan(targetY/targetX))+ + 180;
+      //console.log(bulletAngle)
+
       let bullet = new Bullet({
         scene: this.scene,
         x: this.x, 
         y: this.y,
+        angle: bulletAngle,
         damage: Phaser.Math.Between(2, 8),
-        dir: this.direction
+        dir: this.direction,
+        speed: 500
       });
       this.scene.enemyAttack.add(bullet);
 
-      let targetX = this.scene.deadpool.x;
-      let targetY = this.scene.deadpool.y;
+      
 
-      this.scene.tweens.add({
-          targets: bullet,
-          x: targetX,
-          y: targetY,
-          ease: 'Linear',
-          duration: 500,
-          onComplete: function (tween, targets) {
-              bullet.destroy();
-          }
-      });
+      // this.scene.tweens.add({
+      //     targets: bullet,
+      //     x: targetX,
+      //     y: targetY,
+      //     ease: 'Linear',
+      //     duration: 500,
+      //     onComplete: function (tween, targets) {
+      //         bullet.destroy();
+      //     }
+      // });
     }
   }
 

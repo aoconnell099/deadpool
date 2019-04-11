@@ -153,7 +153,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
 
         if (input.jump && !this.isJumping) {
             this.isJumping = true;
-            console.log('jump');
+            //console.log('jump');
             this.action = 'jump_';
             this.weapon = 'unarmed_';
             this.scene.time.addEvent({ delay: 800, callback: this.disableJumping, callbackScope: this });
@@ -161,15 +161,12 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
 
         // First check to see if deadpool is shooting
         else if ((input.fire || input.shotgun || input.sniper || input.ak || input.minigun || input.grenade) 
-                && !(isShooting)     //(this.pistol.isShooting && this.shotgun.isShooting && this.ak.isShooting && this.sniper.isShooting && this.minigun.isShooting && this.grenade.isShooting) 
-                && !this.isJumping) {
+                && !(isShooting) && !this.isJumping) {    //(this.pistol.isShooting && this.shotgun.isShooting && this.ak.isShooting && this.sniper.isShooting && this.minigun.isShooting && this.grenade.isShooting) 
             if (input.fire) {
                 this.scene.time.addEvent({ callback: this.pistolShoot, callbackScope: this, args: ['pistol'] });
-                //this.scene.time.addEvent({ delay: 300, callback: this.resetShoot, callbackScope: this, args: ['pistol'] });
             }
             else if (input.shotgun) {
                 this.scene.time.addEvent({ callback: this.shotgunShoot, callbackScope: this, args: ['shotgun'] });
-                //this.scene.time.addEvent({ delay: 1000, callback: this.resetShoot, callbackScope: this, args: ['shotgun'] });
             }
             else if (input.ak) {
                 this.scene.time.addEvent({ callback: this.akShoot, callbackScope: this, args: ['ak'] });
@@ -183,25 +180,6 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             else if (input.grenade) {
                 this.scene.time.addEvent({ callback: this.grenadeShoot, callbackScope: this, args: ['grenade'] });
             }
-            // this.isShooting = true;
-            // this.canMove = false; 
-            // // Only need these two lines while using the weapon method of calling the anims
-            // this.action = 'shoot_';
-            // this.weapon = 'pistol_';
-            
-            // let bulletPos = (this.direction === 'right') ? this.x + 42 : this.x - 42;
-            // // Add the bullet to the game and player Attack group
-            // let bullet = new Bullet({
-            //     scene: this.scene,
-            //     x: bulletPos, 
-            //     y: this.y - 17,
-            //     damage: this.shootingAttack,
-            //     dir: this.direction
-            //   });
-            // this.scene.playerAttack.add(bullet);
-            // // 1/5 second delay between shots
-            // this.scene.time.addEvent({ delay: 300, callback: this.enableMove, callbackScope: this });
-            // this.scene.time.addEvent({ delay: 300, callback: this.disableShooting, callbackScope: this });
         } 
         // Next check for melee attack
         else if (input.melee && !this.isAttacking && !isShooting && !this.isJumping)  
@@ -227,9 +205,41 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         // Animation logic to play the correct animation and revert to standing or running once the attack is finished
         // Check the direction of attack and change the physics box offsets to account for sword swinging
         if (this.action === 'jump_') {
-            let targetY = this.y - 30;
-            let anims = this.anims;
-
+            //let targetY = this.y - 30;
+            //let anims = this.anims;
+            this.anims.play(anim, true);
+            this.on('animationstart-dp_unarmed_jump_right', function(event) {
+                //console.log(event);
+                this.scene.tweens.add({
+                    targets: this,
+                    x: this.x,
+                    y: this.y - 50,
+                    ease: 'Linear',
+                    duration: 400,
+                    yoyo: true,
+                    // onStart: function (tween, targets) {
+                    //     anims.play(anim, true);
+                    //     targetY-=20;
+                    // },
+                    
+                });
+            });
+            this.on('animationstart-dp_unarmed_jump_left', function(event) {
+                //console.log(event);
+                this.scene.tweens.add({
+                    targets: this,
+                    x: this.x,
+                    y: this.y-50,
+                    ease: 'Linear',
+                    duration: 400,
+                    yoyo: true,
+                    // onStart: function (tween, targets) {
+                    //     anims.play(anim, true);
+                    //     targetY-=20;
+                    // },
+                    
+                });
+            });
             //this.scene.physics.moveTo(this, this.x, this.y-50, 60, 400);
             //this.anims.play(anim, true);
             //this.scene.physics.moveTo(this, this.x, this.y+50, 60, 400);
@@ -265,19 +275,19 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         
             // });
 
-            this.scene.tweens.add({
-                targets: this,
-                x: this.x,
-                y: targetY,
-                ease: 'Linear',
-                duration: 400,
-                yoyo: true,
-                onStart: function (tween, targets) {
-                    anims.play(anim, true);
-                    targetY-=20;
-                },
+            // this.scene.tweens.add({
+            //     targets: this,
+            //     x: this.x,
+            //     y: targetY,
+            //     ease: 'Linear',
+            //     duration: 400,
+            //     yoyo: true,
+            //     onStart: function (tween, targets) {
+            //         anims.play(anim, true);
+            //         targetY-=20;
+            //     },
                 
-            });
+            // });
             // this.scene.tweens.add({
             //     targets: this,
             //     y: '-=50',
@@ -300,6 +310,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             //this.setY(this.y+50);
             // this.y+=50;
             // Wait 500ms(the duration of the sword swing), then call resetSwords to reset the offset and set the action and weapon to stand and unarmed
+            this.scene.physics.world.disable(this);
+            //this.scene.physics.world.disableBody(this);
             this.scene.time.addEvent({ delay: 800, callback: this.resetJump, callbackScope: this });
         }
         
@@ -402,7 +414,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
     }
     resetJump() {
         if (!this.isJumping) { // Use this instead of this.action === 'attack_' so you can instantly attack again instead of the animation being cut off 1 frame in
-            this.action = 'stand_';
+        this.scene.physics.world.enableBody(this);    
+        this.action = 'stand_';
             this.weapon = 'unarmed_';
         }
     }
