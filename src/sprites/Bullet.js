@@ -7,7 +7,8 @@ export default class Bullet extends Phaser.GameObjects.Sprite {
         this.dir = config.dir;
         this.speed = config.speed;
         this.angle = config.angle;
-        this.gunType = config.gunType
+        this.gunType = config.gunType;
+        this.emitter = config.emitter;
         this.setAngle(config.angle);
         this.setPosition(config.x, config.y);
         this.setScale(config.scale);
@@ -92,6 +93,8 @@ export default class Bullet extends Phaser.GameObjects.Sprite {
             enemy.damage(this.damage, 250);
         }
         else if (this.gunType === 'sniper') {
+            //this.emitter.killAll();
+            this.emitter.stopFollow();
             enemy.damage(this.damage, 650);
         }
         else if (this.gunType === 'mg') {

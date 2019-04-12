@@ -438,7 +438,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             dir: this.direction,
             speed: 500,
             scale: 1,
-            gunType: 'pistol'
+            gunType: 'pistol',
+            emitter: null
             });
         this.scene.playerAttack.add(bullet);
         // 1/5 second delay between shots
@@ -467,7 +468,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 dir: this.direction,
                 speed: 500,
                 scale: 1,
-                gunType: 'shotgun'
+                gunType: 'shotgun',
+                emitter: null
                 });
             this.scene.playerAttack.add(bullet);
         }
@@ -496,7 +498,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             dir: this.direction,
             speed: 650,
             scale: 1,
-            gunType: 'ak'
+            gunType: 'ak',
+            emitter: null
             });
         this.scene.playerAttack.add(bullet);
         
@@ -521,24 +524,25 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             lifespan: 500,
             alpha: { start: 1, end: 0 },
             scale: { start: 0.1, end: 0 },
-            //on: false,
+            on: true,
             blendMode: 'ADD'
         });
         
-        let bulletPos = (this.direction === 'right') ? this.x + 42 : this.x - 42;
+        let bulletPos = (this.direction === 'right') ? this.x + 58 : this.x - 58;
         // Add the bullet to the game and player Attack group
         let bulletAngle = (this.direction === 'right') ? 0 : 180;
         //console.log(bulletAngle);
         let bullet = new Bullet({
             scene: this.scene,
             x: bulletPos, 
-            y: this.y-7,
+            y: this.y-8,
             angle:  bulletAngle,
             damage: 15,
             dir: this.direction,
             speed: 1500,
             scale: 2,
-            gunType: 'sniper'
+            gunType: 'sniper',
+            emitter: emitter
             });
         emitter.startFollow(bullet);
         this.scene.playerAttack.add(bullet);
@@ -567,7 +571,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             dir: this.direction,
             speed: 800,
             scale: 1,
-            gunType: 'mg'
+            gunType: 'mg',
+            emitter: null
             });
         this.scene.playerAttack.add(bullet);
         
