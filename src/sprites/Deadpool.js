@@ -499,7 +499,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         this.scene.tweens.add({
             targets: grenade,
             props: {
-                x: { value: grenade.x+300, duration: 800, ease: 'Linear' },
+                x: { value: (this.direction === 'right') ? grenade.x+300 : grenade.x-300, duration: 800, ease: 'Linear' },
                 y: { value: this.y-80, duration: 400, ease: 'Linear', yoyo: true },
                 angle: { value: grenadeAngle+Phaser.Math.Between(480, 540), duration: 800, ease: 'Linear' }
             },

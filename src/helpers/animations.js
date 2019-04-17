@@ -151,14 +151,14 @@ export default function makeAnimations(scene) {
     });
     scene.anims.create({
         key: 'dp_gren_shoot_left',
-        frames: [ { key: 'deadpoolGunner', frame: 'grenR1' }, { key: 'deadpoolGunner', frame: 'grenR2' } ],
-        frameRate: 6,
+        frames: [ { key: 'deadpoolGunner', frame: 'grenL2' }, { key: 'deadpoolGunner', frame: 'grenL1' } ],
+        frameRate: 2,
         repeat: 0
     });
     scene.anims.create({
         key: 'dp_gren_shoot_right',
-        frames: [ { key: 'deadpoolGunner', frame: 'grenR1' }, { key: 'deadpoolGunner', frame: 'grenR2' } ],
-        frameRate: 6,
+        frames: [ { key: 'deadpoolGunner', frame: 'grenR2' }, { key: 'deadpoolGunner', frame: 'grenR1' } ],
+        frameRate: 2,
         repeat: 0
     });
     // End of Deadpool's animations
