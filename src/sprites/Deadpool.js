@@ -205,24 +205,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         // Animation logic to play the correct animation and revert to standing or running once the attack is finished
         // Check the direction of attack and change the physics box offsets to account for sword swinging
         if (this.action === 'jump_') {
-            //let targetY = this.y - 30;
-            //let anims = this.anims;
             this.anims.play(anim, true);
             this.on('animationstart-dp_unarmed_jump_right', function(event) {
-                //console.log((this.body.velocity.x));
-                // this.scene.tweens.add({
-                //     targets: this,
-                //     x: this.x,
-                //     y: this.y - 50,
-                //     ease: 'Linear',
-                //     duration: 400,
-                //     yoyo: true,
-                //     // onStart: function (tween, targets) {
-                //     //     anims.play(anim, true);
-                //     //     targetY-=20;
-                //     // },
-                    
-                // });
                 this.scene.tweens.add({
                     targets: this,
                     props: {
@@ -231,52 +215,9 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                     }
                     
                 });
-                // this.scene.tweens.add({
-                //     targets: this,
-                //     x: this.x+(((this.body.velocity.x*100)/400)/2),
-                //     y: this.y + 50,
-                //     ease: 'Linear',
-                //     duration: 200,
-                    //yoyo: true,
-                    // onStart: function (tween, targets) {
-                    //     anims.play(anim, true);
-                    //     targetY-=20;
-                    // },
-                    
-                // });
-                // this.scene.tweens.add({
-                //     targets: this,
-                //     x: this.x+((this.body.velocity.x*100)/400),
-                //     y: this.y,
-                //     ease: 'Linear',
-                //     duration: 400,
-                    
-                    // onStart: function (tween, targets) {
-                    //     anims.play(anim, true);
-                    //     targetY-=20;
-                    // },
-                    
-            //     });
             });
             
             this.on('animationstart-dp_unarmed_jump_left', function(event) {
-                //console.log((this.body.velocity.x*100)/400);
-                // this.scene.tweens.add({
-                //     targets: this,
-                //     x: this.x,
-                //     y: this.y-50,
-                //     ease: 'Linear',
-                //     // ease: function (t) {
-                //     //     return Math.pow(Math.sin(t * 3), 3);
-                //     // },
-                //     duration: 400,
-                //     //yoyo: true,
-                //     // onStart: function (tween, targets) {
-                //     //     anims.play(anim, true);
-                //     //     targetY-=20;
-                //     // },
-                    
-                // });
                 this.scene.tweens.add({
                     targets: this,
                     props: {
@@ -285,92 +226,9 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                     }
                     
                 });
-                // this.scene.tweens.add({
-                //     targets: this,
-                //     x: this.x-((this.body.velocity.x*100)/400),
-                //     y: this.y,
-                //     ease: 'Linear',
-                //     duration: 400,
-                    
-                    // onStart: function (tween, targets) {
-                    //     anims.play(anim, true);
-                    //     targetY-=20;
-                    // },
-                    
-                // });
             });
-            //this.scene.physics.moveTo(this, this.x, this.y-50, 60, 400);
-            //this.anims.play(anim, true);
-            //this.scene.physics.moveTo(this, this.x, this.y+50, 60, 400);
             
-            // var tween = this.scene.tweens.add({
-            //     targets: this,
-            //     duration: 800,
-            //     yoyo: false,
-            //     repeat: 0,
-            //     ease: 'Linear',
-                
-            //     y: {
-        
-            //         getEnd: function (target, key, value)
-            //         {
-            //             //value += 30;
-            //             console.log(targetY);
-            //             //console.log(value);
-            //             //console.log(key);
-            //             return value + 30;
-            //         },
-        
-            //         getStart: function (target, key, value)
-            //         {
-            //             anims.play(anim, true);
-            //             console.log(targetY);
-            //             //console.log(value);
-            //             //console.log(key);
-            //             return value - 30;
-            //         }
-        
-            //     }
-        
-            // });
-
-            // this.scene.tweens.add({
-            //     targets: this,
-            //     x: this.x,
-            //     y: targetY,
-            //     ease: 'Linear',
-            //     duration: 400,
-            //     yoyo: true,
-            //     onStart: function (tween, targets) {
-            //         anims.play(anim, true);
-            //         targetY-=20;
-            //     },
-                
-            // });
-            // this.scene.tweens.add({
-            //     targets: this,
-            //     y: '-=50',
-            //     duration: 400,
-            //     ease: 'Power2',
-            //     yoyo: true,
-            //     // delay: 1000
-            // });
-            // this.scene.tweens.add({
-            //     targets: this,
-            //     x: this.x-500,
-            //     duration: 2000,
-            //     ease: 'Power2',
-                
-            // });
-            
-            //this.anims.play(anim, true);
-            
-            //this.setY(targetY);
-            //this.setY(this.y+50);
-            // this.y+=50;
-            // Wait 500ms(the duration of the sword swing), then call resetSwords to reset the offset and set the action and weapon to stand and unarmed
             this.scene.physics.world.disable(this);
-            //this.scene.physics.world.disableBody(this);
             this.scene.time.addEvent({ delay: 800, callback: this.resetJump, callbackScope: this });
         }
         
@@ -388,23 +246,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             this.anims.play(anim, true);
             this.body.setVelocity(0);
             // Wait 200ms(the duration of the shot), then call resetShoot to set the action and weapon to stand and unarmed
-            this.scene.time.addEvent({ delay: 300, callback: this.resetShoot, callbackScope: this });
-            // switch (this.weapon) {
-            //     case 'pistol_':
-            //         this.scene.time.addEvent({ delay: 300, callback: this.resetShoot, callbackScope: this });
-            //     case 'shotgun_':
-            //         this.scene.time.addEvent({ delay: 1000, callback: this.resetShoot, callbackScope: this });
-            //     case 'ak_':
-            //         this.ak = false;
-            //     case 'minigun_':
-            //         this.minigun = false;
-            //     case 'sniper':
-            //         this.sniper = false
-            //     case 'grenade':
-            //         this.grenade = false
-            //     default:
-            //         this.pistol = false;
-            // }
+            this.scene.time.addEvent({ delay: 300, callback: this.resetShoot, callbackScope: this });   
         }
         else {
             // Once delayed functions are called the non attacking animations will resume
@@ -435,7 +277,6 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         }
     }
     disableShooting(gun) {
-        //console.log(gun);
         switch (gun) {
             case 'pistol':
                 this.pistol = false;
@@ -639,6 +480,139 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         this.scene.time.addEvent({ delay: 300, callback: this.enableMove, callbackScope: this });
         this.scene.time.addEvent({ delay: 50, callback: this.disableShooting, callbackScope: this, args: ['minigun'] });
     }
+    grenadeShoot() {
+        this.grenade = true;
+        this.canMove = false;
+        // Only need these two lines while using the weapon method of calling the anims
+        this.action = 'shoot_';
+        this.weapon = 'gren_';
+
+        let grenadePos = (this.direction === 'right') ? this.x + 42 : this.x - 42;
+        // Add the bullet to the game and player Attack group
+        let grenadeAngle = (this.direction === 'right') ? -10 : 170;
+        let grenade = this.scene.add.sprite(grenadePos, this.y+12, 'deadpoolGunner', 'gren' );
+        this.scene.physics.world.enable(grenade);
+        grenade.setScale(0.3);
+        grenade.setAngle(grenadeAngle);
+        
+        //this.scene.playerAttack.add(grenade);
+        this.scene.tweens.add({
+            targets: grenade,
+            props: {
+                x: { value: grenade.x+300, duration: 800, ease: 'Linear' },
+                y: { value: this.y-80, duration: 400, ease: 'Linear', yoyo: true },
+                angle: { value: grenadeAngle+Phaser.Math.Between(480, 540), duration: 800, ease: 'Linear' }
+            },
+            // delay to onComplete callback
+            completeDelay: 1000,
+            onComplete: function () {
+                let particles =  this.scene.add.particles('explosion');
+
+                // let redEmitter = particles.createEmitter({
+                //     frame: 'red',
+                //     //angle: { min: 240, max: 300 },
+                //     x: grenade.x,
+                //     y: grenade.y,
+                //     speed: 1,
+                //     quantity: 1,
+                //     lifespan: 500,
+                //     alpha: { start: 1, end: 0 },
+                //     scale: { start: 1, end: 0 },
+                //     on: true,
+                //     blendMode: 'ADD'
+                // });
+                let smokeEmitter = particles.createEmitter({
+                    frame: 'smoke-puff',
+                    angle: { min: 260, max: 280 },
+                    x: grenade.x,
+                    y: grenade.y,
+                    speed: 60,
+                    quantity: 5,
+                    lifespan: 2500,
+                    //gravityY: -50,
+                    alpha: { start: 1, end: 0 },
+                    scale: { start: 1, end: 0 },
+                    on: true,
+                    //blendMode: 'ADD'
+                });
+                // let muzzle1Emitter = particles.createEmitter({
+                //     frame: 'muzzleflash1',
+                //     angle: { min: 240, max: 300 },
+                //     x: grenade.x,
+                //     y: grenade.y,
+                //     speed: 1,
+                //     quantity: 1,
+                //     lifespan: 500,
+                //     alpha: { start: 1, end: 0 },
+                //     scale: { start: 2, end: 0 },
+                //     on: true,
+                //     blendMode: 'ADD'
+                // });
+                let muzzle2Emitter = particles.createEmitter({
+                    frame: 'muzzleflash2',
+                    //angle: { min: 240, max: 300 },
+                    x: grenade.x,
+                    y: grenade.y,
+                    speed: 1,
+                    quantity: 1,
+                    lifespan: 500,
+                    alpha: { start: 1, end: 0 },
+                    scale: { start: 2, end: 0 },
+                    on: true,
+                    blendMode: 'ADD'
+                });
+                let muzzle3Emitter = particles.createEmitter({
+                    frame: 'muzzleflash3',
+                    //angle: { min: 240, max: 300 },
+                    x: grenade.x,
+                    y: grenade.y,
+                    speed: 1,
+                    quantity: 1,
+                    lifespan: 500,
+                    alpha: { start: 1, end: 0 },
+                    scale: { start: 2, end: 0 },
+                    on: true,
+                    blendMode: 'ADD'
+                });
+                let muzzle4Emitter = particles.createEmitter({
+                    frame: 'muzzleflash7',
+                    //angle: { min: 240, max: 300 },
+                    x: grenade.x,
+                    y: grenade.y,
+                    speed: 1,
+                    quantity: 1,
+                    lifespan: 500,
+                    alpha: { start: 1, end: 0 },
+                    scale: { start: 2, end: 0 },
+                    on: true,
+                    blendMode: 'ADD'
+                });
+                
+                //redEmitter.explode();
+                smokeEmitter.explode();
+                //muzzle1Emitter.explode();
+                muzzle2Emitter.explode();
+                muzzle3Emitter.explode();
+                muzzle4Emitter.explode();
+
+                this.scene.time.addEvent({ delay: 500, callback: function() { grenade.destroy() }, callbackScope: this });
+                grenade.body.setSize(400, 400);
+                grenade.body.setOffset(-175, -175);
+                this.scene.physics.add.collider(this.scene.enemies, grenade, this.grenadeEnemy);
+                //grenade.destroy();
+            },
+            onCompleteScope: this,
+            //onCompleteParams: [],
+            
+        });
+        
+        
+        
+        
+        // 1/5 second delay between shots
+        this.scene.time.addEvent({ delay: 300, callback: this.enableMove, callbackScope: this });
+        this.scene.time.addEvent({ delay: 1000, callback: this.disableShooting, callbackScope: this, args: ['grenade'] });
+    }
     damage(amount) 
     {
         if (!this.damaged && this.alive) {
@@ -660,6 +634,11 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             this.setTint(0xffffff);
             this.scene.physics.world.colliders.add(this.scene.bulletDeadpoolCollider);
         }
+    }
+    grenadeEnemy(enemy)
+    {
+        console.log(enemy);
+        enemy.damage(50, 1000)
     }
 
 }
