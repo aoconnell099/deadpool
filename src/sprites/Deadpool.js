@@ -210,7 +210,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 this.scene.tweens.add({
                     targets: this,
                     props: {
-                        x: { value: this.x+((this.body.velocity.x*100)/400), duration: 800, ease: 'Linear' },
+                        x: { value: this.x+(this.body.velocity.x*0.8), duration: 800, ease: 'Linear' },
                         y: { value: this.y-50, duration: 400, ease: 'Linear', yoyo: true }
                     }
                     
@@ -221,7 +221,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 this.scene.tweens.add({
                     targets: this,
                     props: {
-                        x: { value: this.x+((this.body.velocity.x*100)/400), duration: 800, ease: 'Linear' },
+                        x: { value: this.x+(this.body.velocity.x*0.8), duration: 800, ease: 'Linear' },
                         y: { value: this.y-50, duration: 400, ease: 'Linear', yoyo: true }
                     }
                     
