@@ -3,7 +3,7 @@ import Enemy from './Enemy';
 export default class Slime extends Enemy {
     constructor(config) {
         super(config);
-        this.health = this.health * 3;
+        this.health = this.health * 1.5;
         this.hp.setHealth(this.health);
         this.setTexture('slime_left');
         this.body.setSize(35, 35, true).setOffset(0, 0);

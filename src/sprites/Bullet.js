@@ -87,7 +87,7 @@ export default class Bullet extends Phaser.GameObjects.Sprite {
             enemy.damage(this.damage, 500);
         }
         else if (this.gunType === 'shotgun') {
-            enemy.damage(this.damage, 500);
+            enemy.damage(this.damage, 1);
         }
         else if (this.gunType === 'ak') {
             enemy.damage(this.damage, 250);

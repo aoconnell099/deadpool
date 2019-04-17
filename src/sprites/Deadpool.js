@@ -209,36 +209,95 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             //let anims = this.anims;
             this.anims.play(anim, true);
             this.on('animationstart-dp_unarmed_jump_right', function(event) {
-                //console.log(event);
+                //console.log((this.body.velocity.x));
+                // this.scene.tweens.add({
+                //     targets: this,
+                //     x: this.x,
+                //     y: this.y - 50,
+                //     ease: 'Linear',
+                //     duration: 400,
+                //     yoyo: true,
+                //     // onStart: function (tween, targets) {
+                //     //     anims.play(anim, true);
+                //     //     targetY-=20;
+                //     // },
+                    
+                // });
                 this.scene.tweens.add({
                     targets: this,
-                    x: this.x,
-                    y: this.y - 50,
-                    ease: 'Linear',
-                    duration: 400,
-                    yoyo: true,
+                    props: {
+                        x: { value: this.x+((this.body.velocity.x*100)/400), duration: 800, ease: 'Linear' },
+                        y: { value: this.y-50, duration: 400, ease: 'Linear', yoyo: true }
+                    }
+                    
+                });
+                // this.scene.tweens.add({
+                //     targets: this,
+                //     x: this.x+(((this.body.velocity.x*100)/400)/2),
+                //     y: this.y + 50,
+                //     ease: 'Linear',
+                //     duration: 200,
+                    //yoyo: true,
                     // onStart: function (tween, targets) {
                     //     anims.play(anim, true);
                     //     targetY-=20;
                     // },
                     
-                });
+                // });
+                // this.scene.tweens.add({
+                //     targets: this,
+                //     x: this.x+((this.body.velocity.x*100)/400),
+                //     y: this.y,
+                //     ease: 'Linear',
+                //     duration: 400,
+                    
+                    // onStart: function (tween, targets) {
+                    //     anims.play(anim, true);
+                    //     targetY-=20;
+                    // },
+                    
+            //     });
             });
+            
             this.on('animationstart-dp_unarmed_jump_left', function(event) {
-                //console.log(event);
+                //console.log((this.body.velocity.x*100)/400);
+                // this.scene.tweens.add({
+                //     targets: this,
+                //     x: this.x,
+                //     y: this.y-50,
+                //     ease: 'Linear',
+                //     // ease: function (t) {
+                //     //     return Math.pow(Math.sin(t * 3), 3);
+                //     // },
+                //     duration: 400,
+                //     //yoyo: true,
+                //     // onStart: function (tween, targets) {
+                //     //     anims.play(anim, true);
+                //     //     targetY-=20;
+                //     // },
+                    
+                // });
                 this.scene.tweens.add({
                     targets: this,
-                    x: this.x,
-                    y: this.y-50,
-                    ease: 'Linear',
-                    duration: 400,
-                    yoyo: true,
+                    props: {
+                        x: { value: this.x+((this.body.velocity.x*100)/400), duration: 800, ease: 'Linear' },
+                        y: { value: this.y-50, duration: 400, ease: 'Linear', yoyo: true }
+                    }
+                    
+                });
+                // this.scene.tweens.add({
+                //     targets: this,
+                //     x: this.x-((this.body.velocity.x*100)/400),
+                //     y: this.y,
+                //     ease: 'Linear',
+                //     duration: 400,
+                    
                     // onStart: function (tween, targets) {
                     //     anims.play(anim, true);
                     //     targetY-=20;
                     // },
                     
-                });
+                // });
             });
             //this.scene.physics.moveTo(this, this.x, this.y-50, 60, 400);
             //this.anims.play(anim, true);
@@ -457,7 +516,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         // Add the bullet to the game and player Attack group
         let i;
         for (i=0; i<8; i++) {
-            let bulletAngle = (this.direction === 'right') ? Phaser.Math.Between(-10, 10) : Phaser.Math.Between(-10, 10) + 180;
+            let bulletAngle = (this.direction === 'right') ? Phaser.Math.Between(-6, 6) : Phaser.Math.Between(-6, 6) + 180;
             //console.log(bulletAngle);
             let bullet = new Bullet({
                 scene: this.scene,
