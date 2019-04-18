@@ -17,6 +17,7 @@ export class Title extends Scene {
         let height = this.game.config.height;
         let scene = this.scene;
         let sound = this.sound;
+        let game = this.game
 
         WebFont.load({
             google: {

@@ -2,7 +2,7 @@ export default class HealthDisplay extends Phaser.Scene {
 
     constructor ()
     {
-        super({ key: 'healthDisplay', active: true });
+        super({ key: 'healthDisplay', active: false });
     }
 
     create ()

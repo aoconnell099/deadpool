@@ -1,4 +1,5 @@
 import Bullet from './Bullet';
+import HealthBar from './HealthBar';
 
 export default class Deadpool extends Phaser.GameObjects.Sprite {        
     constructor(config) { 
@@ -12,6 +13,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         
         // Custom elements
         this.health = 100;
+        //this.hp = new HealthBar(this.scene, 50, 80);
         this.speed = 360;
         this.meleeAttack = 20;
         this.shootingAttack = 5;
@@ -38,6 +40,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
         this.weaponIndex = 0;
         this.weapons = [ 'unarmed_', 'swords_', 'pistol_', 'shotgun_', 'sniper_', 'ak_', 'mg_', 'gren_' ];
 
+        this.sound = this.scene.sound;
+
         // Add the control keys for deadpool
         this.keys = {
             jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
@@ -54,6 +58,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             sniper: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E),
             minigun: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R),
             grenade: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T),
+            music: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P)
         };
         this.scene.add.existing(this);     
     }
@@ -74,7 +79,8 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             ak: this.keys.ak.isDown,
             sniper: this.keys.sniper.isDown,
             minigun: this.keys.minigun.isDown,
-            grenade: this.keys.grenade.isDown
+            grenade: this.keys.grenade.isDown,
+            music: this.keys.music.isDown
         };
         let isShooting = (this.pistol || this.shotgun || this.ak || this.sniper || this.minigun || this.grenade);
         //console.log(isShooting);
@@ -99,6 +105,15 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                     this.weapon =this.weapons[this.weaponIndex];
                 }
             });
+        }
+
+        if (input.music) {
+            if (this.sound.isPlaying) {
+                this.sound.pause();
+            }
+            else {
+                this.sound.resume();
+            }
         }
 
         if (this.canMove) {
@@ -507,6 +522,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
             completeDelay: 1000,
             onComplete: function () {
                 let particles =  this.scene.add.particles('explosion');
+                let particles2 =  this.scene.add.particles('explosion2');
 
                 // let redEmitter = particles.createEmitter({
                 //     frame: 'red',
@@ -535,19 +551,33 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                     on: true,
                     //blendMode: 'ADD'
                 });
-                // let muzzle1Emitter = particles.createEmitter({
-                //     frame: 'muzzleflash1',
-                //     angle: { min: 240, max: 300 },
+                // let explosionEmitter = particles2.createEmitter({
+                //     frame: 'sprite12',
+                //     angle: { min: 260, max: 280 },
                 //     x: grenade.x,
                 //     y: grenade.y,
-                //     speed: 1,
+                //     speed: 60,
                 //     quantity: 1,
-                //     lifespan: 500,
+                //     lifespan: 800,
+                //     //gravityY: -50,
                 //     alpha: { start: 1, end: 0 },
-                //     scale: { start: 2, end: 0 },
+                //     scale: { start: 1, end: 0 },
                 //     on: true,
-                //     blendMode: 'ADD'
+                //     //blendMode: 'ADD'
                 // });
+                let muzzle1Emitter = particles.createEmitter({
+                    frame: 'muzzleflash1',
+                    angle: { min: 240, max: 300 },
+                    x: grenade.x,
+                    y: grenade.y,
+                    speed: 1,
+                    quantity: 1,
+                    lifespan: 500,
+                    alpha: { start: 1, end: 0 },
+                    scale: { start: 2, end: 0 },
+                    on: true,
+                    blendMode: 'ADD'
+                });
                 let muzzle2Emitter = particles.createEmitter({
                     frame: 'muzzleflash2',
                     //angle: { min: 240, max: 300 },
@@ -590,10 +620,11 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
                 
                 //redEmitter.explode();
                 smokeEmitter.explode();
-                //muzzle1Emitter.explode();
+                muzzle1Emitter.explode();
                 muzzle2Emitter.explode();
                 muzzle3Emitter.explode();
                 muzzle4Emitter.explode();
+                //explosionEmitter.explode();
 
                 this.scene.time.addEvent({ delay: 500, callback: function() { grenade.destroy() }, callbackScope: this });
                 grenade.body.setSize(400, 400);
@@ -638,7 +669,7 @@ export default class Deadpool extends Phaser.GameObjects.Sprite {
     grenadeEnemy(enemy)
     {
         console.log(enemy);
-        enemy.damage(50, 1000)
+        enemy.damage(50, 400)
     }
 
 }

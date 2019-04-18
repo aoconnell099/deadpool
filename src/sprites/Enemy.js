@@ -191,7 +191,12 @@ export default class Enemy extends Phaser.GameObjects.Sprite {
       this.setTint(0x8e2f15);
       this.scene.physics.world.colliders.remove(this.scene.bulletEnemyCollider);
       //this.scene.physics.world.colliders.remove(this.scene.deadpoolEnemyCollider); 
-      this.knockback(amount);
+      if (amount > 15) {
+        this.knockback(15);
+      }
+      else {
+        this.knockback(amount);
+      }
       this.damaged = true;
       this.scene.time.addEvent({ delay: time, callback: this.normalize, callbackScope: this });
     }

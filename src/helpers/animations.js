@@ -1,4 +1,32 @@
 export default function makeAnimations(scene) {
+    
+    scene.anims.create({
+        key: 'intro_vid',
+        frames: [
+            { key: 'f1', duration: 3000 },
+            { key: 'f2' },
+            
+            { key: 'f4' },
+            { key: 'f5' },
+            { key: 'f6' },
+            { key: 'f7' },
+            { key: 'f8' },
+            { key: 'f9' },
+            { key: 'f10' },
+            { key: 'f11' },
+            { key: 'f12' },
+            { key: 'f13' },
+            { key: 'f14' },
+            { key: 'f15' },
+            { key: 'f16' },
+            { key: 'f17', duration: 3000 },
+            { key: 'f18', duration: 4000 },
+            { key: 'f19', duration: 4000 },
+        ],
+        frameRate: 19,
+        repeat: 0
+    });
+    
     // Deadpool's Animations
     //-----------------------------------
 

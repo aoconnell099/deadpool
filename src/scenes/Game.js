@@ -91,9 +91,14 @@ export class Game extends Scene {
         this.events.on('resize', this.resize, this);
         window.addEventListener('resize', function (event) {
             console.log('window resized window listener')
-            this.game.resize(window.innerWidth, window.innerHeight);
+            this.resize(window.innerWidth, window.innerHeight);
         
         }, false);
+        //console.log(this.scene);
+        this.scene.get('healthDisplay').scene.setActive(true);//.setActive(true);
+        console.log(this.healthText);
+        //this.healthText.scene.run('healthDisplay');
+        //this.game.scene.getScene('healthDisplay').setActive(true, 'healthDisplay');
 
     }
     update (time, delta) {
