@@ -1,5 +1,5 @@
-"Deadpool Game concept"
-"Press Z to fire your pistol"
-"Press X to attack with your swords"
-"The rest of the weapons are controlled with QWERT"
-"Q: shotgun, W: AK-47, E: Sniper Rifle, R: Minigun, T: grenade"
+Deadpool Game concept <br>
+Press Z to fire your pistol <br>
+Press X to attack with your swords <br>
+The rest of the weapons are controlled with QWERT <br>
+Q: shotgun, W: AK-47, E: Sniper Rifle, R: Minigun, T: grenade <br>
