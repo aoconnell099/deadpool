@@ -2,4 +2,5 @@ Deadpool Game concept <br>
 Press Z to fire your pistol <br>
 Press X to attack with your swords <br>
 The rest of the weapons are controlled with QWERT <br>
-Q: shotgun, W: AK-47, E: Sniper Rifle, R: Minigun, T: grenade <br>
+Q: shotgun, W: AK-47, E: Sniper Rifle, R: Minigun, T: grenade <br> <br>
+Play game <a href=https://aoconnell099.github.io/deadpool/build/index.html>here</a>
